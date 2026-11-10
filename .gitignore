@@ -1,0 +1,20 @@
+# Session recordings may contain personal data — never commit them
+data/raw/*
+!data/raw/.gitkeep
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# Generated speech audio (re-made automatically)
+basestation/voice/audio_cache/
+
+# Public datasets are huge (43k files) — download them separately, never push them
+data/open datasets/
+data/processed/
+
+# Streamlit secrets (Supabase key, dashboard password)
+.streamlit/secrets.toml

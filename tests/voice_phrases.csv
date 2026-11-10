@@ -1,0 +1,42 @@
+text,expected,language,hard
+yes,ok,en,0
+yes I'm okay,ok,en,0
+I'm fine,ok,en,0
+"No, no, I'm fine",ok,en,0
+"I'm alright, don't worry",ok,en,0
+"I'm not hurt, just resting",ok,en,0
+help,help,en,0
+help me please,help,en,0
+I can't get up,help,en,0
+my hip hurts,help,en,0
+no,help,en,0
+I'm not okay,help,en,0
+I feel dizzy,help,en,0
+I'm okay but my leg hurts,help,en,0
+,none,,0
+uh... hmm,none,en,0
+Thank you for watching,none,en,0
+"can, can, no need",ok,singlish,0
+I okay lah,ok,singlish,0
+"Not bad, still can walk",ok,singlish,0
+"aiyo, pain ah",help,singlish,0
+我没事,ok,zh,0
+我沒事,ok,zh-traditional,0
+没有事,ok,zh,0
+我很好，谢谢,ok,zh,0
+没问题,ok,zh,0
+救命,help,zh,0
+好痛啊,help,zh,0
+我起不来,help,zh,0
+不好,help,zh,0
+我不太舒服,help,zh,0
+救護車,help,zh-traditional,0
+我还可以，就是腿有点痛,help,zh,0
+唔...,none,zh,0
+"我没事, I'm okay",ok,mixed,0
+"help me, 好痛",help,mixed,0
+okay 但是我的脚很痛,help,mixed,0
+"我 fall down 了, cannot stand",help,mixed,0
+头很晕,help,zh,1
+I think so... my back a bit funny,help,en,1
+who's that? what happened?,help,en,1

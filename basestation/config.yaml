@@ -1,0 +1,59 @@
+# Starting values from context.md — tune on real data, don't hard-code these elsewhere.
+
+sensor:
+  sample_rate_hz: 50
+  accel_units: g
+  gyro_units: deg/s
+
+windows:
+  detector_window_s: 2.5
+  overlap: 0.5
+  activity_epoch_s: 30
+
+activity:
+  # ENMO cut-points in mg (ENMO = |acc| - 1 g). Set on calibrated research devices — calibrate the MPU-6050 first.
+  enmo_sedentary_max_mg: 45
+  enmo_light_max_mg: 100
+  enmo_moderate_max_mg: 400
+  spurious_sleep_min_run_min: 60
+
+fall:
+  impact_threshold_g: 2.5
+  stillness_check_s: 10
+
+inactivity:
+  sedentary_alert_min: null   # N not decided yet
+
+voice:
+  check_in_total_timeout_s: 45
+  retries: 1
+
+  # Ears (STT) — faster-whisper runs on the laptop, audio never leaves it
+  record_seconds: 7
+  stt_model: small            # tiny / base / small / medium — bigger = more accurate but slower
+  stt_initial_prompt: "我没事, I'm okay. 救命, help me."   # hints that replies mix English + simplified Chinese
+  silence_rms: 0.005          # below this loudness the recording counts as silence (tune per mic)
+
+  # Brain (LLM) — only sorts the reply into ok / help / none; never decides the alert
+  llm_model: claude-haiku-5-5
+  llm_effort: low             # low / medium / high — more thinking = slower answer
+  llm_timeout_s: 8            # after this, fall back to keyword matching
+
+  # Mouth (TTS) — edge-tts online voices, Windows offline voice as backup
+  tts_voice_en: en-SG-LunaNeural
+  tts_voice_zh: zh-CN-XiaoxiaoNeural
+
+  # What the speaker says (scripted, not LLM-generated)
+  lines:
+    question:   { en: "Are you okay? Say yes if you are fine.", zh: "你还好吗？没事的话请说没事。" }
+    ok:         { en: "Okay. Glad you are fine.",               zh: "好的，你没事就好。" }
+    alert:      { en: "I am contacting your caregiver now.",    zh: "我现在联络你的照顾者。" }
+
+dashboard:
+  elder_name: "Mdm Lim"         # placeholder — never put a real person's name in the repo
+  caregiver_name: "Caregiver"
+  utc_offset_hours: 8           # Singapore time (no daylight saving)
+  base_station_stale_s: 120     # no heartbeat for this long → red "Can't see" banner
+  watch_stale_s: 120            # no sensor data for this long → watch shown as disconnected
+  refresh_s: 10                 # dashboard re-reads the database this often
+  url: ""                       # paste the online dashboard link here after deploying (goes in Telegram alerts)

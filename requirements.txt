@@ -1,0 +1,26 @@
+# SilverGuard base station — use Python 3.11 (faster-whisper's engine may not support newer versions yet)
+#   py -3.11 -m venv .venv
+#   .venv\Scripts\activate
+#   pip install -r requirements.txt
+
+# shared
+pyyaml
+python-dotenv
+pydantic
+numpy
+pytest
+
+# voice check-in (Obj 3): STT → LLM → TTS
+anthropic          # Brain: cloud LLM (Claude)
+faster-whisper     # Ears: speech-to-text on the laptop
+sounddevice        # mic recording + speaker playback
+soundfile          # reads the MP3s made by edge-tts
+edge-tts           # Mouth: free online voices
+pyttsx3            # Mouth backup: Windows offline voice
+
+# online: database, alerts, dashboard
+supabase           # laptop → online database (and dashboard reads it)
+requests           # Telegram alerts
+streamlit          # caregiver dashboard (basestation/dashboard/requirements.txt is the cloud-only list)
+plotly
+pandas

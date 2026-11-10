@@ -1,0 +1,7 @@
+# Only what the online dashboard needs (Streamlit Community Cloud installs this file).
+# The voice/Whisper packages stay on the home laptop, see the root requirements.txt.
+streamlit>=1.67
+plotly>=6
+pandas>=2
+pyyaml
+supabase>=2

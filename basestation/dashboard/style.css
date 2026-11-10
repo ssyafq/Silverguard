@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --bg: #F4F3F0; --card: #FFFFFF; --line: #E7E4DF;
+  --ink: #1F1F1C; --ink-2: #5C5B54; --ink-3: #8A887F;
+  --brand: #17695A;
+  --alert-bg: #FDF0E8; --alert-line: #F2C7A8; --alert-ink: #8A2E0C; --alert-btn: #9A3A0F;
+  --bad-bg: #FBE9E7; --bad-line: #EDB5AD; --bad-ink: #9B1C14;
+  --ok-bg: #E3F1EB; --ok-line: #BFDCCF; --ok-ink: #17695A;
+  --muted-bg: #EFEEEA;
+}
+
+/* page */
+.stApp { background: var(--bg); }
+/* :where() keeps this rule weak, so .mono etc. still win; Streamlit's icon font is left alone */
+.stApp :where(*:not([data-testid="stIconMaterial"])) { font-family: 'IBM Plex Sans', sans-serif; }
+[data-testid="stHeader"] { background: transparent; }
+[data-testid="stMainBlockContainer"], .block-container { max-width: 1320px; padding-top: 2.2rem; padding-bottom: 3rem; }
+.mono { font-family: 'IBM Plex Mono', monospace !important; }
+
+/* header */
+.sg-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.sg-brand { display: flex; gap: 14px; align-items: center; }
+.sg-logo { width: 40px; height: 40px; border-radius: 9px; background: var(--brand); display: flex; align-items: center; justify-content: center; flex: none; }
+.sg-title { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.sg-sub { font-size: 13px; color: var(--ink-2); }
+.sg-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 12px; font-size: 13px; color: var(--ink); display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.chip.sample { border: 1px dashed #B9B6AE; background: transparent; color: var(--ink-2); font-size: 12px; font-weight: 500; }
+.chip.bad { background: var(--bad-bg); border-color: var(--bad-line); color: var(--bad-ink); font-weight: 500; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #2E8B57; display: inline-block; }
+.dot.bad { background: #C62828; }
+.dot.grey { background: #A8A69E; }
+
+/* cards = keyed Streamlit containers whose key starts with "card_" */
+[class*="st-key-card_"] { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px 18px; }
+.card-label { font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
+.card-value { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.card-value.word { font-family: 'IBM Plex Sans', sans-serif; }
+.card-sub { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.section-title { font-size: 17px; font-weight: 600; color: var(--ink); }
+.section-note { font-size: 13px; color: var(--ink-2); }
+
+/* banners */
+.st-key-banner_alert { background: var(--alert-bg); border: 1px solid var(--alert-line); border-radius: 14px; padding: 14px 22px; }
+.st-key-banner_bad { background: var(--bad-bg); border: 1px solid var(--bad-line); border-radius: 14px; padding: 14px 22px; }
+.st-key-banner_watch { background: var(--bad-bg); border: 1px solid var(--bad-line); border-radius: 14px; padding: 14px 22px; }
+.st-key-banner_handling { background: var(--ok-bg); border: 1px solid var(--ok-line); border-radius: 14px; padding: 14px 22px; }
+.banner { display: flex; gap: 14px; align-items: flex-start; }
+.banner-title { font-weight: 600; font-size: 16px; }
+.banner-text { font-size: 14px; margin-top: 2px; }
+.banner.alert { color: var(--alert-ink); }
+.banner.bad { color: var(--bad-ink); }
+.banner.handling { color: var(--ok-ink); }
+.st-key-ack_btn button { background: var(--alert-btn); color: #fff; border: none; font-weight: 600; border-radius: 8px; padding: 10px 18px; }
+.st-key-ack_btn button:hover, .st-key-ack_btn button:focus { background: #7A2E0B; color: #fff; }
+[class*="st-key-call_btn"] a { background: #fff; border: 1px solid var(--alert-line); color: var(--alert-ink); border-radius: 8px; padding: 10px 18px; }
+[class*="st-key-resolve"] button { background: var(--ok-ink); color: #fff; border: none; font-weight: 600; border-radius: 8px; }
+[class*="st-key-resolve"] button:hover { background: #0F5246; color: #fff; }
+
+/* activity legend */
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); }
+.swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+
+/* event log */
+.evlog-wrap { overflow-x: auto; }
+.evlog { width: 100%; border-collapse: collapse; font-size: 14px; }
+.evlog th { text-align: left; font-size: 12px; font-weight: 500; color: var(--ink-2); padding: 8px; border-bottom: 1px solid var(--line); }
+.evlog td { padding: 14px 8px; border-bottom: 1px solid var(--line); color: var(--ink); vertical-align: middle; }
+.evlog td.when { white-space: nowrap; }
+.banner-icon { width: 24px; height: 24px; flex: none; margin-top: 2px; }
+.evlog tr.open td { background: #FFF8F3; }
+.evlog td.said { font-style: italic; color: var(--ink-2); }
+.evlog td.event { font-weight: 600; }
+.pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.pill.alert { background: #FCE6D6; color: #B0410F; }
+.pill.handling { background: #FFF1C9; color: #7A5300; }
+.pill.ok { background: var(--ok-bg); color: var(--ok-ink); }
+.pill.muted { background: var(--muted-bg); color: var(--ink-2); }
+.footnote { font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
+.empty { font-size: 14px; color: var(--ink-3); padding: 18px 0; }
+
+/* event detail timeline */
+.steps { display: grid; grid-template-columns: 78px 1fr; row-gap: 10px; column-gap: 8px; font-size: 14px; color: var(--ink); }
+.steps .time { font-family: 'IBM Plex Mono', monospace; color: var(--ink-2); font-size: 13px; }
+.explain { font-size: 13px; color: var(--ink-2); margin: 2px 0 12px; }
+
+/* system health tiles */
+.tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 12px; }
+.tile { background: var(--bg); border-radius: 10px; padding: 14px 16px; }
+.tile-label { font-size: 13px; color: var(--ink-2); }
+.tile-value { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 600; color: var(--ink); margin-top: 6px; }
+.tile-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 2px; }
+
+.disclaimer { font-size: 12px; color: var(--ink-3); text-align: center; margin-top: 18px; }
+
+/* phones: stack and drop less important columns */
+@media (max-width: 900px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .evlog .conf { display: none; }
+  .evlog td { padding: 12px 6px; }
+  .evlog td.when, .pill { white-space: normal; }
+  .card-value { font-size: 22px; }
+}

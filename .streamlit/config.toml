@@ -1,0 +1,13 @@
+# Streamlit settings for the SilverGuard dashboard (colours from the PNG design).
+[theme]
+base = "light"
+primaryColor = "#17695A"
+backgroundColor = "#F4F3F0"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1F1F1C"
+
+[client]
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false

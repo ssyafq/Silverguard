@@ -1,0 +1,12 @@
+participant_id,age_bin,stratum,windows,moving_windows
+P012,53+,53+ / more moving,16785,9009
+P057,53+,53+ / less moving,15979,4626
+P064,53+,53+ / more moving,15350,7177
+P076,53+,53+ / more moving,19426,13391
+P081,53+,53+ / less moving,7103,2729
+P092,53+,53+ / less moving,17281,2696
+P096,18-29,younger / less moving,20080,3331
+P107,38-52,younger / more moving,15340,5186
+P111,53+,53+ / less moving,19052,3714
+P117,53+,53+ / more moving,12674,6478
+P137,53+,53+ / more moving,12021,6983
