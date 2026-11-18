@@ -18,3 +18,5 @@ data/processed/
 
 # Streamlit secrets (Supabase key, dashboard password)
 .streamlit/secrets.toml
+
+Melv-Codes/**/*.wav
