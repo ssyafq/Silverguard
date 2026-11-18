@@ -21,6 +21,7 @@ pyttsx3            # Mouth backup: Windows offline voice
 # online: database, alerts, dashboard
 supabase           # laptop → online database (and dashboard reads it)
 requests           # Telegram alerts
+pyserial           # watch over USB (record.py, watch_bridge.py)
 streamlit          # caregiver dashboard (basestation/dashboard/requirements.txt is the cloud-only list)
 plotly
 pandas

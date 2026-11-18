@@ -29,7 +29,8 @@ from basestation.voice.settings import dashboard_config, voice_config
 TITLES = {"fall": "Possible fall", "inactivity": "Long inactivity"}
 
 
-def handle_event(reason: str, typed: bool, cloud: Cloud) -> str:
+def handle_event(reason: str, typed: bool, cloud: Cloud, detector: str = "typed demo",
+                 source: str = "typed in the demo") -> str:
     cfg = voice_config()
     max_attempts = 1 + int(cfg["retries"])
     budget_s = float(cfg["check_in_total_timeout_s"])
@@ -37,8 +38,8 @@ def handle_event(reason: str, typed: bool, cloud: Cloud) -> str:
     start = time.perf_counter()
 
     event_id = new_id()
-    cloud.insert("events", {"id": event_id, "t": now_iso(), "type": reason, "detector": "typed demo", "status": "open"})
-    cloud.step(event_id, f"{title} reported (typed in the demo)")
+    cloud.insert("events", {"id": event_id, "t": now_iso(), "type": reason, "detector": detector, "status": "open"})
+    cloud.step(event_id, f"{title} reported ({source})")
 
     for attempt in range(1, max_attempts + 1):
         print(f"\n[check-in] reason={reason} attempt={attempt}")
@@ -100,15 +101,14 @@ def main() -> None:
         from basestation.voice import listen
         listen.load_model()
 
-    print("\nReady. Type an event like 'fall' (or 'quit').")
+    print("\nReady. Press Enter to simulate a fall, type another event (e.g. 'inactivity'), or 'quit'.")
     try:
         while True:
-            event = input("\nevent> ").strip().lower()
+            event = input("\nevent [fall]> ").strip().lower() or "fall"   # empty Enter = fall
             if event in ("quit", "exit", "q"):
                 break
-            if event:
-                outcome = handle_event(event, typed=args.typed, cloud=cloud)
-                print(f"[done] outcome={outcome}")
+            outcome = handle_event(event, typed=args.typed, cloud=cloud)
+            print(f"[done] outcome={outcome}")
     finally:
         cloud.close()
 
