@@ -6,7 +6,7 @@ The running record of **what exists in the project, block by block**, and **ever
 - `context.md` = design and decisions (the *why*).
 - `progress.md` = what has actually been built, file by file, and when it changed (the *what*).
 
-Last full review: **2026-11-17**
+Last full review: **2026-11-17** (last change: 2026-11-18)
 
 ---
 
@@ -23,7 +23,7 @@ Last full review: **2026-11-17**
 | 7 | Voice check-in pipeline (ears, brain, mouth) | Obj 3 (built for testing) | Done on a laptop | `basestation/voice/` |
 | 8 | Watch ↔ laptop USB bridge | Obj 2/3 | **New, uncommitted** | `basestation/voice/watch_bridge.py` |
 | 9 | Cloud sync to Supabase | Obj 2 | Code done; Supabase project not created yet | `basestation/sync/` |
-| 10 | Telegram caregiver alerts | Obj 3 | Code done; bot not created yet | `basestation/alerts/` |
+| 10 | Telegram caregiver alerts | Obj 3 | Done, bot set up in `.env` | `basestation/alerts/` |
 | 11 | Caregiver dashboard (Streamlit) | Obj 2 | Done on sample data | `basestation/dashboard/` |
 | 12 | Configuration, secrets, environment | All | Done | `basestation/config.yaml`, `.env.example`, `.streamlit/`, `requirements.txt` |
 | 13 | Tests | Obj 2/4 | 97 tests passing (as of 2026-11-10) | `tests/` |
@@ -173,7 +173,7 @@ Last full review: **2026-11-17**
 | `keywords.py` (81 lines) | **Offline backup brain.** Traditional→simplified Chinese, then checks help words **before** ok words (so "not okay" and "好痛" become help). Weak words ("no", "不是") count as help. Nothing recognised → `none`. |
 | `speak.py` (118 lines) | **Mouth.** edge-tts voices `en-SG-LunaNeural` and `zh-CN-XiaoxiaoNeural`, MP3s cached by hash in `audio_cache/` so fixed lines play instantly and offline. Backup: pyttsx3 (Windows offline voice). Functions: `prepare`, `speak`, `say_line`, `prepare_all_lines`. |
 | `checkin.py` (79 lines) | One check-in: ask → listen → understand. `run_check_in(reason, attempt, typed)` returns `{"reply", "transcript", "latency_s"}` (the §4 contract). Logs one CSV row per check-in (transcript only, never audio). |
-| `demo.py` (117 lines) | Runs the whole flow from the keyboard. `handle_event()` writes the event to the cloud, runs up to 2 attempts (1 retry) inside a 45 s budget, then: `ok` → false alarm, no alert; `help`/`none` → spoken "contacting your caregiver" + Telegram alert. `--typed` lets you type the reply instead of speaking. This retry/alert logic is a **stand-in** for the real rules engine (Obj 3). |
+| `demo.py` (117 lines) | Runs the whole flow from the keyboard. `handle_event()` writes the event to the cloud, runs up to 2 attempts (1 retry) inside a 45 s budget, then: `ok` → false alarm, no alert; `help`/`none` → Telegram alert, then spoken "contacting your caregiver". If the check-in itself crashes (e.g. watch mic error) it still alerts (`alert_checkin_failed`). `--typed` lets you type the reply instead of speaking. This retry/alert logic is a **stand-in** for the real rules engine (Obj 3). |
 | `audio_cache/` | Generated MP3s (git-ignored). |
 
 **Spoken lines** (in `config.yaml`, scripted, not LLM-made): question, ok, alert, in English and Mandarin.
@@ -294,6 +294,13 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 ---
 
 ## Part C. Change log (newest first)
+
+### 2026-11-18: Telegram alerts on Melv's watch speaker + mic bridge (main program)
+- **Main program is now `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`** (the watch's own INMP441 mic + MAX98357A speaker; no laptop audio).
+- `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`: prints Telegram alerts ON/OFF at startup; if the watch is unplugged (`SerialException`) it sends the caregiver a Telegram message that falls are not being detected, instead of crashing silently.
+- `basestation/voice/demo.py`: `handle_event()` catches a crashed check-in (e.g. watch mic error over USB) and still alerts (outcome `alert_checkin_failed`). `alert()` now sends Telegram **before** speaking the alert line.
+- `tests/test_sync.py`: added `test_demo_still_alerts_when_watch_audio_fails`. 98 tests pass.
+- `Melv-code/Speaker_Gyro_Vib_copy_20261113095344.ino`: deleted by the user (old file, superseded by `Melv-Codes/`).
 
 ### 2026-11-17: Full project review written into progress.md
 - `progress.md`: rewritten with an overview table (Part A), a detailed section for each of the 17 blocks (Part B) and this change log (Part C).

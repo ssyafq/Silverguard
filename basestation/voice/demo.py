@@ -44,7 +44,11 @@ def handle_event(reason: str, typed: bool, cloud: Cloud, detector: str = "typed 
     for attempt in range(1, max_attempts + 1):
         print(f"\n[check-in] reason={reason} attempt={attempt}")
         cloud.step(event_id, "Base station asked “Are you okay?”" if attempt == 1 else "No clear reply, asked again")
-        rec = check_in(reason, attempt, typed=typed)
+        try:
+            rec = check_in(reason, attempt, typed=typed)
+        except Exception as e:                   # e.g. the watch's mic dropped out over USB
+            print(f"[check-in] FAILED: {e}")
+            return alert(cloud, event_id, title, "the voice check-in failed", "")
         cloud.insert("checkins", {
             "id": new_id(), "event_id": event_id, "t": now_iso(), "attempt": attempt,
             "transcript": rec["transcript"], "reply": rec["reply"], "used_fallback": rec["used_fallback"],
@@ -72,17 +76,17 @@ def handle_event(reason: str, typed: bool, cloud: Cloud, detector: str = "typed 
 
 
 def alert(cloud: Cloud, event_id: str, title: str, why: str, heard: str) -> str:
-    speak.say_line("alert")
     dash = dashboard_config()
     text = (f"⚠️ SilverGuard: {title.lower()} at {datetime.now():%H:%M}, {why}."
             + (f" They said: “{heard}”." if heard else "")
             + f"\nPlease check on {dash['elder_name']}."
             + (f"\nDashboard: {dash['url']}" if dash.get("url") else ""))
-    sent, info = telegram.send_alert(text)
+    sent, info = telegram.send_alert(text)       # Telegram first: the spoken line takes seconds
+    speak.say_line("alert")
     cloud.update("events", event_id, {"alerted_at": now_iso()})
     cloud.step(event_id, "Caregiver alerted on Telegram" if sent else f"Telegram alert not sent ({info}); dashboard only")
     print(f"[rules] {why} → ALERT. " + ("Telegram message sent." if sent else f"Telegram NOT sent: {info}."))
-    return "alert_help" if why == "asked for help" else "alert_no_reply"
+    return {"asked for help": "alert_help", "the voice check-in failed": "alert_checkin_failed"}.get(why, "alert_no_reply")
 
 
 def main() -> None:

@@ -117,3 +117,18 @@ def test_demo_ok_reply_is_false_alarm_without_alert(quiet_demo, monkeypatch, tmp
     cloud.flush()
     assert sent == []
     assert any(e[0] == "events" and e[1] == "update" and e[2].get("status") == "false_alarm" for e in db.log)
+
+
+def test_demo_still_alerts_when_watch_audio_fails(quiet_demo, monkeypatch, tmp_path):
+    """A USB mic/speaker error mid check-in must not swallow the alert."""
+    demo, sent = quiet_demo
+    def broken_check_in(*args, **kwargs):
+        raise RuntimeError("watch mic recording failed over USB")
+    monkeypatch.setattr(demo, "check_in", broken_check_in)
+    db = FakeDB()
+    cloud = Cloud(outbox=tmp_path / "outbox.jsonl", client=db, start_thread=False)
+
+    assert demo.handle_event("fall", typed=False, cloud=cloud) == "alert_checkin_failed"
+    cloud.flush()
+    assert len(sent) == 1 and "voice check-in failed" in sent[0]
+    assert any(e[0] == "events" and e[1] == "update" and "alerted_at" in e[2] for e in db.log)
