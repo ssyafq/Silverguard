@@ -1,94 +1,157 @@
-"""Laptop test: the real watch detects a fall over USB → the laptop runs the voice check-in.
+"""The real watch detects a fall over USB → voice check-in on the WATCH's speaker + mic → Telegram alert.
 
-    python -m basestation.voice.watch_bridge              # finds the watch's COM port by itself
+    python -m basestation.voice.watch_bridge                 # finds the watch's COM port by itself
     python -m basestation.voice.watch_bridge --port COM5
+    python -m basestation.voice.watch_bridge --manual        # press Enter to test a check-in, no fall needed
+    python -m basestation.voice.watch_bridge --laptop-audio  # old firmware: laptop speaker + mic instead
 
 Flow:  drop/fall the watch → firmware prints "FALL DETECTED" and pauses
-       → laptop says "Are you okay?" → listens 7 s → Claude sorts the reply → spoken answer
-       (+ dashboard rows / Telegram alert if set up in .env) → sends 'r' so the watch resumes.
+       → watch speaker says "Are you okay?" → watch mic records the reply (streamed to the laptop)
+       → Whisper + Claude sort it into ok / help / none
+       → help or no reply: Telegram alert to the caregiver (+ dashboard rows if set up in .env)
+       → sends 'r' so the watch resumes.
 
-This is a LAPTOP STAND-IN for the Railway server: here the watch talks over the USB cable and the
-laptop's own mic + speaker are used. On the real system the watch sends the event over Wi-Fi and
-uses its own speaker + mic (Obj 1 / Obj 3).
+Safety: if the watch's audio fails mid check-in, the caregiver is still alerted (demo.handle_event),
+and if the watch is unplugged, a Telegram message says so.
 
-Firmware: flash silverguard_logger.ino with RAW_STREAM 0 and HALT_ON_FALL 1 (the defaults).
-Close the Arduino Serial Monitor first — only one program can open the COM port.
+Firmware: Melv-Codes/ESP32-SpeakerUSBVer (INMP441 mic + MAX98357A speaker; wiring in its WIRING.md).
+With --laptop-audio, firmware/silverguard_logger (v0.4) also works. Close the Arduino Serial Monitor
+first — only one program can open the COM port.
+
+This is a LAPTOP STAND-IN for the Railway server: the watch talks over the USB cable here.
+On the real system the watch sends the event over Wi-Fi (Obj 1 / Obj 3).
 """
 
 import argparse
 import sys
+import tempfile
 import time
+from pathlib import Path
 
 import serial                                   # pip install pyserial
-from serial.tools import list_ports
+import soundfile as sf
 
+from basestation.alerts import telegram
 from basestation.sync.uploader import Cloud, now_iso
-from basestation.voice import listen, speak
+from basestation.voice import esp32_audio, listen, speak
 from basestation.voice.demo import handle_event
+from basestation.voice.settings import dashboard_config
 
 FALL_MARKERS = ("FALL DETECTED", "# EVENT FALL")
+DETECTOR = "ESP32-SpeakerUSBVer v0.5 (USB)"
 
 
-def find_port() -> str:
-    ports = list(list_ports.comports())
-    for p in ports:                              # ESP32-C3 native USB = Espressif VID 0x303A
-        if p.vid == 0x303A or "USB Serial" in (p.description or "") or "JTAG" in (p.description or ""):
-            return p.device
-    if len(ports) == 1:
-        return ports[0].device
-    names = ", ".join(f"{p.device} ({p.description})" for p in ports) or "none"
-    sys.exit(f"Couldn't pick the watch's port automatically. Ports found: {names}\n"
-             f"Plug the watch in, then run again with --port COMx.")
+# ---------- route speak / listen through the watch's speaker + mic ----------
+
+def _watch_play_file(path) -> None:
+    data, samplerate = sf.read(str(path), dtype="float32")
+    if not esp32_audio.play_audio(data, samplerate):
+        raise RuntimeError("watch speaker playback failed over USB")
 
 
-def open_port(port: str) -> serial.Serial:
-    ser = serial.Serial()
-    ser.port, ser.baudrate, ser.timeout = port, 115200, 1
-    ser.dtr = ser.rts = False                    # don't reset the ESP32 when opening the port
-    ser.open()
-    return ser
+def _watch_speak_offline(text: str, lang: str) -> None:
+    """Offline backup voice (pyttsx3) rendered to a WAV, then played on the watch speaker."""
+    import pyttsx3
+
+    engine = pyttsx3.init()
+    if lang == "zh":
+        zh = [v for v in engine.getProperty("voices")
+              if "chinese" in v.name.lower() or "zh" in v.id.lower()]
+        if not zh:
+            engine.stop()
+            raise RuntimeError("no offline Chinese voice installed")
+        engine.setProperty("voice", zh[0].id)
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        engine.save_to_file(text, str(tmp_path))
+        engine.runAndWait()
+        engine.stop()
+        _watch_play_file(tmp_path)
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+
+def _watch_record(seconds: float):
+    audio = esp32_audio.record_audio(seconds, samplerate=listen.SAMPLE_RATE)
+    if audio is None:
+        raise RuntimeError("watch mic recording failed over USB")
+    return audio
+
+
+def use_watch_audio() -> None:
+    speak._play_file = _watch_play_file
+    speak._speak_offline = _watch_speak_offline
+    listen.record = _watch_record
+
+
+# ---------- main loop ----------
+
+def resume(ser: serial.Serial) -> None:
+    ser.reset_input_buffer()                     # drop the alert lines repeated while we were talking
+    ser.write(b"r")                              # tell the watch to resume detecting
+    ser.flush()
+
+
+def run_check_in(cloud: Cloud, ser: serial.Serial, source: str) -> None:
+    t0 = time.perf_counter()
+    outcome = handle_event("fall", typed=False, cloud=cloud, detector=DETECTOR, source=source)
+    print(f"\n[done] outcome={outcome}  (fall -> end of check-in: {time.perf_counter() - t0:.1f} s)")
+    resume(ser)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Watch over USB -> voice check-in on the laptop")
-    parser.add_argument("--port", help="watch COM port, e.g. COM5 (default: auto-detect)")
+    parser = argparse.ArgumentParser(description="Watch over USB -> voice check-in -> Telegram alert")
+    parser.add_argument("--port", default="auto", help="watch COM port, e.g. COM5 (default: auto-detect)")
+    parser.add_argument("--manual", action="store_true", help="press Enter to run a check-in instead of waiting for a fall")
+    parser.add_argument("--laptop-audio", action="store_true", help="use the laptop speaker + mic (old v0.4 firmware)")
     parser.add_argument("--quiet", action="store_true", help="don't echo the watch's lines")
     args = parser.parse_args()
 
+    ser = esp32_audio.get_serial(args.port)
+    if ser is None:
+        sys.exit("Couldn't open the watch's COM port.\n"
+                 "1. Plug the watch in.  2. Close the Arduino Serial Monitor.  3. Try --port COMx.")
+    if not args.laptop_audio:
+        use_watch_audio()
+
     cloud = Cloud()
-    print("Online dashboard:", "ON (Supabase)" if cloud.enabled else "OFF")
+    print("Watch:            ", ser.port, "(laptop speaker + mic)" if args.laptop_audio else "(watch speaker + mic)")
+    print("Telegram alerts:  ", "ON" if telegram.is_configured() else "OFF (see basestation/alerts/telegram.py)")
+    print("Online dashboard: ", "ON (Supabase)" if cloud.enabled else "OFF")
     print("Getting ready: spoken lines + speech-to-text model (first run downloads it)...")
     speak.prepare_all_lines()
     listen.load_model()
-
-    port = args.port or find_port()
-    ser = open_port(port)
-    ser.write(b"r")                              # in case the watch is still paused from an earlier fall
-    print(f"\nListening to the watch on {port}. Make it fall (Ctrl+C to stop).\n")
+    resume(ser)                                  # in case the watch is still paused from an earlier fall
 
     try:
-        while True:
-            line = ser.readline().decode("utf-8", errors="replace").strip()
-            if not line:
-                continue
-            cloud.watch_last_data_at = now_iso()  # dashboard: watch is connected
-            if not args.quiet:
-                print(f"  watch | {line}")
-            if any(m in line for m in FALL_MARKERS):
-                print("\n>>> Fall detected by the watch - starting the voice check-in\n")
-                t0 = time.perf_counter()
-                outcome = handle_event("fall", typed=False, cloud=cloud,
-                                       detector="watch fw v0.4 (USB)", source="detected by the watch")
-                print(f"\n[done] outcome={outcome}  (fall -> end of check-in: {time.perf_counter() - t0:.1f} s)")
-                ser.reset_input_buffer()          # drop the alert lines repeated while we were talking
-                ser.write(b"r")                   # tell the watch to resume detecting
-                print("Watch resumed. Make it fall again, or Ctrl+C to stop.\n")
+        if args.manual:
+            print("\nManual mode. Press Enter to run a check-in on the watch, or type 'quit'.")
+            while input("\n> ").strip().lower() not in ("quit", "exit", "q"):
+                run_check_in(cloud, ser, source="triggered manually over USB")
+        else:
+            print(f"\nListening to the watch on {ser.port}. Make it fall (Ctrl+C to stop).\n")
+            while True:
+                line = ser.readline().decode("utf-8", errors="replace").strip()
+                if not line:
+                    continue
+                cloud.watch_last_data_at = now_iso()  # dashboard: watch is connected
+                if not args.quiet:
+                    print(f"  watch | {line}")
+                if any(m in line for m in FALL_MARKERS):
+                    print("\n>>> Fall detected by the watch - starting the voice check-in\n")
+                    run_check_in(cloud, ser, source="detected by the watch")
+                    print("Watch resumed. Make it fall again, or Ctrl+C to stop.\n")
     except KeyboardInterrupt:
         pass
     except serial.SerialException as e:
-        print(f"\nLost the watch ({e}). Was the cable unplugged?")
+        print(f"\nLost the watch ({type(e).__name__}). Was the cable unplugged?")
+        sent, info = telegram.send_alert(
+            f"⚠️ SilverGuard: lost connection to {dashboard_config()['elder_name']}'s watch. "
+            "Falls are NOT being detected until it is reconnected.")
+        print("Caregiver told on Telegram." if sent else f"Telegram NOT sent: {info}.")
     finally:
-        ser.close()
+        esp32_audio.close_serial()
         cloud.close()
 
 

@@ -22,7 +22,6 @@ import tempfile
 import time
 from pathlib import Path
 
-import serial
 import soundfile as sf
 
 # Ensure repo root and this folder are importable regardless of working directory
@@ -34,10 +33,8 @@ if str(THIS_DIR) not in sys.path:
     sys.path.insert(0, str(THIS_DIR))
 
 import esp32_audio  # noqa: E402
-from basestation.alerts import telegram  # noqa: E402
 from basestation.sync.uploader import Cloud, now_iso  # noqa: E402
 from basestation.voice import demo, listen, speak  # noqa: E402
-from basestation.voice.settings import dashboard_config  # noqa: E402
 
 FALL_MARKERS = ("FALL DETECTED", "# EVENT FALL")
 
@@ -116,7 +113,6 @@ def main() -> None:
 
     cloud = Cloud()
     print(f"ESP32 USB Audio:  ON ({ser.port} -> MAX98357A speaker + INMP441 mic)")
-    print("Telegram alerts: ", "ON" if telegram.is_configured() else "OFF (see basestation/alerts/telegram.py)")
     print("Online dashboard:", "ON (Supabase)" if cloud.enabled else "OFF")
     print("Getting ready: spoken lines + speech-to-text model (first run downloads it)...")
     speak.prepare_all_lines()
@@ -171,13 +167,6 @@ def main() -> None:
                     print("Watch resumed. Make it fall again, or Ctrl+C to stop.\n")
     except KeyboardInterrupt:
         pass
-    except serial.SerialException as e:
-        # watch unplugged / USB dropped: tell the caregiver that falls are no longer being detected
-        print(f"\nLost the watch ({type(e).__name__}). Was the cable unplugged?")
-        sent, info = telegram.send_alert(
-            f"⚠️ SilverGuard: lost connection to {dashboard_config()['elder_name']}'s watch. "
-            "Falls are NOT being detected until it is reconnected.")
-        print("Caregiver told on Telegram." if sent else f"Telegram NOT sent: {info}.")
     finally:
         esp32_audio.close_serial()
         cloud.close()

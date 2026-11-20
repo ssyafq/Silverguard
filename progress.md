@@ -6,7 +6,7 @@ The running record of **what exists in the project, block by block**, and **ever
 - `context.md` = design and decisions (the *why*).
 - `progress.md` = what has actually been built, file by file, and when it changed (the *what*).
 
-Last full review: **2026-11-17** (last change: 2026-11-18)
+Last full review: **2026-11-17** (last change: 2026-11-20)
 
 ---
 
@@ -21,7 +21,7 @@ Last full review: **2026-11-17** (last change: 2026-11-18)
 | 5 | Still/moving model: UCI-HAR, Capture-24, HAR70+ | Obj 2 | Done; simple threshold kept | `notebooks/Model based of UCI DataSet/` |
 | 6 | Still/moving model: stronger-feature experiments | Obj 2 | Done; failed the pre-set test | `notebooks/Developing stronger movement classifier/` |
 | 7 | Voice check-in pipeline (ears, brain, mouth) | Obj 3 (built for testing) | Done on a laptop | `basestation/voice/` |
-| 8 | Watch ↔ laptop USB bridge | Obj 2/3 | **New, uncommitted** | `basestation/voice/watch_bridge.py` |
+| 8 | Watch ↔ laptop USB bridge (watch speaker + mic → Telegram) | Obj 2/3 | Done, main program | `basestation/voice/watch_bridge.py` |
 | 9 | Cloud sync to Supabase | Obj 2 | Code done; Supabase project not created yet | `basestation/sync/` |
 | 10 | Telegram caregiver alerts | Obj 3 | Done, bot set up in `.env` | `basestation/alerts/` |
 | 11 | Caregiver dashboard (Streamlit) | Obj 2 | Done on sample data | `basestation/dashboard/` |
@@ -182,15 +182,16 @@ Last full review: **2026-11-17** (last change: 2026-11-18)
 
 ---
 
-### Block 8. Watch ↔ laptop USB bridge (NEW, uncommitted)
-**File:** `basestation/voice/watch_bridge.py` (96 lines)
+### Block 8. Watch ↔ laptop USB bridge (main program: fall → watch speaker + mic → Telegram)
+**Files:** `basestation/voice/watch_bridge.py` (152 lines), `basestation/voice/esp32_audio.py` (copy of `Melv-Codes/ESP32-SpeakerUSBVer/esp32_audio.py`)
 
-- Run: `python -m basestation.voice.watch_bridge` (auto-finds the port) or `--port COM5`; `--quiet` hides the watch lines.
-- `find_port()`: picks the ESP32-C3 by Espressif USB VID 0x303A, or "USB Serial"/"JTAG" in the description, or the only port present.
-- `open_port()`: 115200 baud, DTR/RTS off so opening the port does not reset the ESP32.
-- `main()`: prepares spoken lines and the Whisper model, sends `r` to un-pause the watch, then reads lines. Every line updates `watch_last_data_at` (dashboard shows the watch as connected). On `FALL DETECTED` or `# EVENT FALL` it calls `demo.handle_event("fall", detector="watch fw v0.4 (USB)", source="detected by the watch")`, prints the fall → end-of-check-in time, clears the serial buffer and sends `r` so the watch resumes.
-- Needs firmware with `RAW_STREAM 0` and `HALT_ON_FALL 1` (the defaults), and the Arduino Serial Monitor closed.
-- **Purpose:** a laptop stand-in for the Railway server. It is the first time the **real watch's fall detection drives the voice check-in end to end**.
+- Run: `python -m basestation.voice.watch_bridge` (auto-finds the port) or `--port COM5`; `--manual` = press Enter to test a check-in without a fall; `--quiet` hides the watch lines. (`--laptop-audio` exists only for the old v0.4 firmware; the prototype uses the watch's own audio.)
+- The check-in uses the **watch's own MAX98357A speaker and INMP441 mic** over USB serial (Melv's protocol: `P` play chunk → `K` ack, `L` record → `M` + PCM), by swapping `speak._play_file`, `speak._speak_offline` and `listen.record`.
+- Startup prints Watch / Telegram alerts / Online dashboard ON/OFF.
+- On `FALL DETECTED` or `# EVENT FALL` it calls `demo.handle_event("fall", detector="ESP32-SpeakerUSBVer v0.5 (USB)")` (help / no reply / failed check-in → Telegram alert), then clears the buffer and sends `r` so the watch resumes.
+- **Safety:** if the watch is unplugged (`SerialException`), a Telegram message tells the caregiver that falls are not being detected.
+- Firmware: `Melv-Codes/ESP32-SpeakerUSBVer/ESP32-SpeakerUSBVer.ino`. Arduino Serial Monitor must be closed.
+- `Melv-Codes/` is the groupmate's folder and is **not edited** by us; his `usb_voice_bridge.py` stays as his reference version.
 
 ---
 
@@ -295,8 +296,12 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ## Part C. Change log (newest first)
 
+### 2026-11-20: Main program moved out of Melv-Codes
+- `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`: put back exactly as the groupmate wrote it (commit `d5b8f19`). `Melv-Codes/` is his folder and is not edited by us.
+- `basestation/voice/watch_bridge.py`: rewritten (96 → 152 lines) as the **main program**: watch's own speaker + mic, `--manual`, Telegram ON/OFF at startup, Telegram message if the watch disconnects.
+- `basestation/voice/esp32_audio.py`: **new**, copy of Melv's USB audio protocol so our code doesn't import from his folder.
+
 ### 2026-11-18: Telegram alerts on Melv's watch speaker + mic bridge (main program)
-- **Main program is now `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`** (the watch's own INMP441 mic + MAX98357A speaker; no laptop audio).
 - `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`: prints Telegram alerts ON/OFF at startup; if the watch is unplugged (`SerialException`) it sends the caregiver a Telegram message that falls are not being detected, instead of crashing silently.
 - `basestation/voice/demo.py`: `handle_event()` catches a crashed check-in (e.g. watch mic error over USB) and still alerts (outcome `alert_checkin_failed`). `alert()` now sends Telegram **before** speaking the alert line.
 - `tests/test_sync.py`: added `test_demo_still_alerts_when_watch_audio_fails`. 98 tests pass.
