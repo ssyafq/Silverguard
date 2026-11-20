@@ -21,8 +21,8 @@
 | Objective | Scope | Owner |
 |---|---|---|
 | **Obj 1** · Watch hardware | ESP32-C3 + MPU-6050, I2S mic + speaker amp, power, housing, Wi-Fi link to the server | Groupmate(s) |
-| **Obj 2** · Event detection + dashboard | Fall + still/moving models (on the watch), Supabase data, Streamlit caregiver dashboard, "can't see" / dropout handling | **Syafiq (me)** |
-| **Obj 3** · Voice check-in + rules engine | Railway server: speech-to-text → Claude → text-to-speech, English/Mandarin, check-in dialogue, rules that decide alerts, Telegram | Groupmate(s) |
+| **Obj 2** · Event detection + dashboard | Fall + still/moving models (on the watch), Firestore data (moving from Supabase), Streamlit caregiver dashboard, "can't see" / dropout handling | **Syafiq (me)** |
+| **Obj 3** · Voice check-in + rules engine | Google Cloud Run server: speech-to-text → Claude → text-to-speech, English/Mandarin, check-in dialogue, rules that decide alerts, Telegram | Groupmate(s) |
 | **Obj 4** · Evaluation | Own recordings, detection metrics, false alarms/hour, fall → alert time, dialogue errors, usability, privacy check | **Syafiq (me)** |
 
 Everyone helps each other, but **changes to Obj 1 or Obj 3 code should be coordinated with the owners first.** If I ask for work in their area, flag it.
@@ -34,9 +34,9 @@ Everyone helps each other, but **changes to Obj 1 or Obj 3 code should be coordi
 Four parts, plus a Telegram alert:
 
 ```
-WATCH (Obj 1 + 2)              SERVER on Railway (Obj 3)               ONLINE (Obj 2)
+WATCH (Obj 1 + 2)              SERVER on Cloud Run (Obj 3)             ONLINE (Obj 2)
 ─────────────────────          ─────────────────────────────           ─────────────────────
-MPU-6050 @ 50 Hz               receive event + audio clip              Supabase (Postgres)
+MPU-6050 @ 50 Hz               receive event + audio clip              Firestore (Firebase)
    │                              │                                     events, check-ins,
 ESP32-C3 runs the models:        speech-to-text (cloud)                 status, activity
  fall (4 stages) + still/moving   │                                          ▲
@@ -49,13 +49,15 @@ mic: records reply ── Wi-Fi ──►   │
                                   └── help / no reply ──► Telegram bot ──► caregiver's phone
 ```
 
-- **The server is Railway** (we already have a subscription). "Base station" in folder names means this server. There is no laptop or home hub in the design.
+- **The server is Google Cloud Run** (Singapore, `asia-southeast1`), decided 2026-11-20 to replace Railway; not built yet. "Base station" in folder names means this server. There is no laptop or home hub in the design.
+- **Data is Firestore** (Firebase), decided 2026-11-20 to replace Supabase. **Migration in progress:** the code in `basestation/sync/` and `basestation/dashboard/data.py` still talks to Supabase until it is ported.
+- Cloud Run only accepts **HTTPS**, so the watch must use `WiFiClientSecure`. Cloud Run sleeps when idle; a cold start after a fall must not delay the check-in (keep one instance warm or use cloud STT, see §7).
 - **The watch does the detection itself.** Firmware v0.4 runs the fall model and the still/moving model in C on the ESP32-C3, and needs no internet for that. The server only handles the voice part and the alerts.
 - **Two kinds of model, not two LLMs:** the watch runs small classifiers (random forests). The voice side is a cascaded pipeline (STT → LLM → TTS). Don't call the classifier an LLM.
 - **Escalation is rule-based, never LLM-decided.** Claude only sorts the reply. The rules decide whether to alert.
 - Voice stays **cascaded** (not speech-to-speech) so transcripts can be logged, each stage tested on its own, and there's a fallback if one stage fails.
 - **Offline backup:** with no Wi-Fi, the watch plays a pre-recorded "Are you okay?" and uses a button to answer. With no LLM, the server uses the keyword backup.
-- The voice code was first tested **on a laptop** as an early check of the pipeline. Those parts (`basestation/voice/`, `sync/`, `alerts/`) get reused on the Railway server.
+- The voice code was first tested **on a laptop** as an early check of the pipeline. Those parts (`basestation/voice/`, `sync/`, `alerts/`) get reused on the Cloud Run server.
 
 ---
 
@@ -88,8 +90,13 @@ t_ms,ax,ay,az,gx,gy,gz
 ```
 Implemented by `basestation/voice/checkin.py` (`run_check_in`).
 
-### Server → Supabase
-Tables in `basestation/sync/schema.sql`: `events`, `checkins`, `event_steps`, `status` (heartbeat), `activity_minutes`. The dashboard only reads these.
+### Server → Firestore (migration in progress)
+Same data as the current Supabase tables in `basestation/sync/schema.sql`: `events`, `checkins`, `event_steps`, `status` (heartbeat), `activity_minutes`. The dashboard only reads these (plus the acknowledge / resolve buttons).
+Planned Firestore layout (to finalise when porting):
+- `events/{id}` with subcollections `checkins/` and `steps/` (avoids Firestore's 30-value `in` limit).
+- `status/current`: one heartbeat document.
+- `activity_days/{YYYY-MM-DD}`: **one document per day** holding the 1,440 minutes, not one per minute. Firestore bills per document read (free tier 50k/day); 7 days of per-minute docs would be ~10k reads per dashboard load.
+- Security rules deny all client access; only the server and dashboard read/write, using the Admin SDK with a service account.
 
 ---
 
@@ -135,7 +142,7 @@ Stages 3–4 were added after testing on the prototype, where hitting the table 
 
 ## 6. Dashboard (Obj 2)
 
-**Streamlit app on Streamlit Community Cloud** (private, password-protected), reading from **Supabase**. Built from `basestation/dashboard/Caregiver dashboard@1x.png`.
+**Streamlit app on Streamlit Community Cloud** (private, password-protected), reading from **Firestore** (still Supabase in code until ported). Built from `basestation/dashboard/Caregiver dashboard@1x.png`.
 
 - Shows the alert banner, today's activity, event log, event detail (what the voice check-in did), and system health. Works on a phone.
 - **Red "Can't see" state** when the heartbeat or watch data stops. A dead device must never look like "all fine".
@@ -154,7 +161,7 @@ Flow after a fall: watch speaker asks *"Are you okay?"* (English, then Mandarin)
 - **Speech-to-text on the server: not yet chosen.** Needs a cloud service that handles English + Mandarin + mixed. faster-whisper was used in the laptop test.
 - **Text-to-speech:** edge-tts voices (en-SG-LunaNeural, zh-CN-XiaoxiaoNeural) in the laptop test. Fixed lines can be pre-recorded on the watch.
 - Mic only listens during a check-in, never always-on (privacy).
-- The Claude API key lives only on the server (Railway variables / `.env`), **never** in the dashboard.
+- The Claude API key lives only on the server (Cloud Run secrets via Secret Manager / `.env`), **never** in the dashboard.
 
 ---
 
@@ -181,8 +188,8 @@ Rules:
 |---|---|---|---|
 | A. Own data | Record with our watch: staged falls onto a mattress, table hits, put-downs, walking, sitting, lying | Obj 2 + all | A labelled set to test both models on |
 | B. Watch audio + Wi-Fi | I2S mic + speaker amp; send events and audio over Wi-Fi | Obj 1 | The watch plays a sound and sends a recording to a test server |
-| C. Railway server | Watch audio → STT → Claude → TTS → back to watch; reuse voice brain, backup, alert code | Obj 3 + Obj 2 | A fake watch (file or phone) gets a spoken answer back |
-| D. Real data on dashboard | Server writes events, check-ins, heartbeat, activity to Supabase | Obj 2 | A staged fall shows on the dashboard within seconds |
+| C. Cloud Run server | Watch audio → STT → Claude → TTS → back to watch; reuse voice brain, backup, alert code | Obj 3 + Obj 2 | A fake watch (file or phone) gets a spoken answer back |
+| D. Real data on dashboard | Server writes events, check-ins, heartbeat, activity to Firestore | Obj 2 | A staged fall shows on the dashboard within seconds |
 | E. Offline backup | No Wi-Fi: pre-recorded prompt on the watch + answer button | Obj 1 + Obj 3 | Check-in still works with Wi-Fi off |
 | F. Evaluation | Recall, false alarms/h, fall → alert time, misheard replies, usability, privacy | Obj 4 | Numbers for every objective + repeatable demo |
 
@@ -195,11 +202,11 @@ Final deadline: report, poster and video by ~7 Feb 2027 (presentation the week o
 ## 10. Tech stack and conventions
 
 - **Watch:** Arduino/C++ on ESP32-C3. Models exported to C (`firmware/silverguard_logger/`), boot self-test against Python outputs.
-- **Server:** Python on Railway. **Dashboard:** Streamlit + Plotly. **Data:** Supabase. **Alerts:** Telegram Bot API.
+- **Server:** Python in a container on Google Cloud Run. **Dashboard:** Streamlit + Plotly. **Data:** Firestore (Firebase). **Alerts:** Telegram Bot API.
 - Notebooks are for exploration only. **Reusable code goes in `.py` modules.**
 - Gyro and accel units are not interconvertible. Keep them as separate channels (g and deg/s).
 - Thresholds, window sizes and timings are **starting values** in `basestation/config.yaml`, not hard-coded.
-- Secrets only in `.env` (git-ignored) / Railway variables / Streamlit secrets. Never in `.env.example` or git.
+- Secrets only in `.env` (git-ignored) / Google Secret Manager (Cloud Run) / Streamlit secrets. Never in `.env.example` or git.
 - Python 3.11 venv; `requirements.txt` at the root. Run tests with `pytest`.
 
 **Repo layout (current):**
@@ -209,7 +216,7 @@ Final deadline: report, poster and video by ~7 Feb 2027 (presentation the week o
 ├── firmware/             # watch code + models in C
 ├── basestation/          # = the server side (name kept from early on)
 │   ├── voice/            # STT → Claude → TTS, keyword backup, check-in
-│   ├── sync/             # Supabase schema + uploader
+│   ├── sync/             # cloud schema + uploader (Supabase → Firestore port pending)
 │   ├── alerts/           # Telegram
 │   ├── dashboard/        # Streamlit app + setup README
 │   ├── detection/ ingest/ rules/   # placeholders
@@ -235,7 +242,7 @@ Final deadline: report, poster and video by ~7 Feb 2027 (presentation the week o
 
 ## 12. Status (update every session)
 
-**As of 11 Nov 2026:**
+**As of 20 Nov 2026:**
 
 | Piece | Status | Notes |
 |---|---|---|
@@ -245,17 +252,20 @@ Final deadline: report, poster and video by ~7 Feb 2027 (presentation the week o
 | Voice brain (Claude) | Done | 41/41 test replies; keyword backup |
 | Speak / listen loop | Working | Proven on a laptop; moving to server + watch |
 | Speaker + mic on the watch | Not started | Obj 1 |
-| Railway server | Not started | Reuses voice, backup, sync and alert code |
-| Supabase | Working | Tables designed; project to create |
+| Cloud Run server | Not started | Replaces Railway (2026-11-20); reuses voice, backup, sync and alert code |
+| Firestore | Not started | Replaces Supabase (2026-11-20); Supabase uploader + dashboard source to port |
 | Telegram alerts | Working | Code ready; bot to create |
 | Caregiver dashboard | Done | Live on sample data; real data once the server sends it |
 
-**Next two weeks:** record own data; agree the watch ↔ server message format; pick a cloud STT; order/wire the I2S mic + amp; create Supabase project + Telegram bot; start the Railway server with a fake watch; ask the supervisor about ethics approval.
+**Next two weeks:** record own data; agree the watch ↔ server message format; pick a cloud STT; order/wire the I2S mic + amp; create the Firebase project (Singapore) and port the uploader + dashboard to Firestore; start the Cloud Run server with a fake watch; ask the supervisor about ethics approval.
 
 **Open decisions:**
 - [x] LLM: Claude Haiku 5.5 (keyword backup offline)
-- [x] Dashboard: Streamlit Community Cloud + Supabase + Telegram (2026-11-10)
-- [x] Server: Railway (2026-11-11)
+- [x] Dashboard: Streamlit Community Cloud + Telegram (2026-11-10)
+- [x] ~~Server: Railway (2026-11-11)~~ → **Server: Google Cloud Run** (2026-11-20, team agreed)
+- [x] ~~Data: Supabase (2026-11-10)~~ → **Data: Firestore / Firebase** (2026-11-20, team agreed)
+- [ ] Cloud Run cold start: keep one instance warm (`--min-instances=1`) vs. cloud STT only
+- [ ] Dashboard hosting: stay on Streamlit Community Cloud or move to Cloud Run
 - [ ] Cloud speech-to-text service (English + Mandarin + mixed)
 - [ ] Watch ↔ server message + audio format and transport (HTTP / WebSocket / MQTT)
 - [ ] Final label set (still/moving/fall; inactivity rule)
@@ -271,3 +281,4 @@ Add one or two lines per session: date, what was done, what's next.
 - **2026-11-06** — Dataset EDA of Capture-24 and GOTOV vs UCI-HAR (`notebooks/Developing stronger movement classifier/`). Neither has a gyroscope; GOTOV's real rate is 85.7 Hz and is kept as a fair test.
 - **2026-11-10** — Voice check-in pipeline built and tested on a laptop (`basestation/voice/`: faster-whisper, Claude Haiku 5.5 + keyword backup, edge-tts + pyttsx3). Caregiver dashboard built from the PNG (Streamlit), Supabase uploader with offline outbox, Telegram alerts. 97 tests pass (LLM 41/41). Pushed to the private GitHub repo.
 - **2026-11-11** — Wrote `docs/SilverGuard_Progress_Update.docx` for the team. Rewrote this file to match: watch with its own speaker + mic, Railway server, detection on the watch (firmware v0.4), roadmap phases A–F. Next: own recordings, agree the watch ↔ server format, choose cloud STT, start the Railway server.
+- **2026-11-20** — Team agreed to drop Railway and Supabase: server moves to **Google Cloud Run**, data to **Firestore (Firebase)**. Updated this file (decision only; code still uses Supabase). Next: create the Firebase project, port `sync/uploader.py` and `dashboard/data.py` to Firestore, HTTPS on the watch.

@@ -22,7 +22,7 @@ Last full review: **2026-11-17** (last change: 2026-11-20)
 | 6 | Still/moving model: stronger-feature experiments | Obj 2 | Done; failed the pre-set test | `notebooks/Developing stronger movement classifier/` |
 | 7 | Voice check-in pipeline (ears, brain, mouth) | Obj 3 (built for testing) | Done on a laptop | `basestation/voice/` |
 | 8 | Watch ↔ laptop USB bridge (watch speaker + mic → Telegram) | Obj 2/3 | Done, main program | `basestation/voice/watch_bridge.py` |
-| 9 | Cloud sync to Supabase | Obj 2 | Code done; Supabase project not created yet | `basestation/sync/` |
+| 9 | Cloud sync (Supabase → moving to Firestore) | Obj 2 | Supabase code done; to be ported to Firestore (decided 2026-11-20) | `basestation/sync/` |
 | 10 | Telegram caregiver alerts | Obj 3 | Done, bot set up in `.env` | `basestation/alerts/` |
 | 11 | Caregiver dashboard (Streamlit) | Obj 2 | Done on sample data | `basestation/dashboard/` |
 | 12 | Configuration, secrets, environment | All | Done | `basestation/config.yaml`, `.env.example`, `.streamlit/`, `requirements.txt` |
@@ -295,6 +295,10 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 ---
 
 ## Part C. Change log (newest first)
+
+### 2026-11-20: Decision: Railway + Supabase → Google Cloud Run + Firestore
+- `context.md`: team agreed to replace Railway with **Google Cloud Run** (server) and Supabase with **Firestore / Firebase** (data). Updated architecture, §4 data contract (planned Firestore layout: subcollections, one activity document per day to stay under read quota), dashboard, secrets, roadmap, status, open decisions and session log. Marked as *migration in progress*: no code changed yet.
+- `progress.md`: Block 9 status updated.
 
 ### 2026-11-20: Main program moved out of Melv-Codes
 - `Melv-Codes/ESP32-SpeakerUSBVer/usb_voice_bridge.py`: put back exactly as the groupmate wrote it (commit `d5b8f19`). `Melv-Codes/` is his folder and is not edited by us.
