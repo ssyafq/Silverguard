@@ -296,6 +296,12 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ## Part C. Change log (newest first)
 
+### 2026-11-20: Speaker watch: calibration retries + saved in flash
+- `Melv-Codes/ESP32-SpeakerUSBVer/ESP32-SpeakerUSBVer.ino`: after a replug, the watch was moved during its 2 s boot calibration. The calibration was rejected and it fell back to no correction (1.23 g at rest → "Moving"). Calibration now retries up to 5 times. A good result (accel scale + gyro bias) is saved with `Preferences` (namespace `sg_calib`). If every try fails, the saved one is used.
+
+### 2026-11-20: Speaker watch: accel calibration + I2C read retry
+- `Melv-Codes/ESP32-SpeakerUSBVer/ESP32-SpeakerUSBVer.ino`: this MPU-6050 reads ~1.23 g lying still. The still/moving model was trained on 1.00 g (its splits sit at 0.99–1.02 g average, 1.24–1.29 g peak), so it flipped to "Moving" untouched. At boot, the gyro calibration now also measures resting |a| and rescales the accelerometer so rest reads 1.00 g (`acc_scale`, printed as `# accel_rest_g`). A failed I2C read is now retried up to 2 times before the 2.56 s window is wiped, which cuts the random pauses.
+
 ### 2026-11-20: Decision: Railway + Supabase → Google Cloud Run + Firestore
 - `context.md`: team agreed to replace Railway with **Google Cloud Run** (server) and Supabase with **Firestore / Firebase** (data). Updated architecture, §4 data contract (planned Firestore layout: subcollections, one activity document per day to stay under read quota), dashboard, secrets, roadmap, status, open decisions and session log. Marked as *migration in progress*: no code changed yet.
 - `progress.md`: Block 9 status updated.

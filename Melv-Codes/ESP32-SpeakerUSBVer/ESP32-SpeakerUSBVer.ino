@@ -9,6 +9,7 @@
 
 #include <Wire.h>
 #include <ESP_I2S.h>
+#include <Preferences.h>   // keeps the calibration in flash, so a bumped boot still uses it
 #include "fall_features.h"
 #include "fall_model.h"     // fall forest + FALL_TRIGGER_G, FALL_PROBA_THRESHOLD, FALL_WIN
 #include "har_model.h"      // still / moving forest
@@ -88,6 +89,7 @@ uint32_t max_model_us = 0;   // slowest model run so far (must stay well below 2
 
 // ---------------- model state ----------------
 float    gyro_bias[3] = {0, 0, 0};   // deg/s, measured at boot while still
+float    acc_scale    = 1.0f;        // makes |a| read 1.00 g at rest (this MPU-6050 reads ~1.23 g; the models were trained on 1.00 g)
 float    am_ring[HAR_WIN];           // last 128 accel magnitudes (g)
 float    gm_ring[HAR_WIN];           // last 128 gyro magnitudes (deg/s)
 int      ring_pos     = 0;           // where the next sample goes
@@ -346,7 +348,8 @@ void printHeader() {
 }
 
 // Keep still ~2 s at boot: a still gyro should read 0, whatever it reads is bias.
-void calibrateGyro() {
+// One 2 s attempt. Returns false if the watch moved (or reads failed); then nothing is changed.
+bool calibrateOnce() {
   const int N = 100;
   float sg[3] = {0, 0, 0}, sa = 0, saa = 0;
   int got = 0;
@@ -359,10 +362,42 @@ void calibrateGyro() {
     }
     delay(20);
   }
-  if (got < N / 2) { Serial.println("# WARNING: gyro calibration failed (read errors), bias = 0"); return; }
+  if (got < N / 2) { Serial.println("# calibration: too many read errors"); return false; }
   float spread = sqrtf(fmaxf(saa / got - (sa / got) * (sa / got), 0));
-  if (spread > 0.02f) { Serial.println("# WARNING: moved during gyro calibration, bias = 0 (reset to retry, keep still)"); return; }
+  if (spread > 0.02f) { Serial.println("# calibration: watch moved, keep it STILL..."); return false; }
+  float rest_g = sa / got;                              // should be 1.00 g lying still
+  if (rest_g < 0.7f || rest_g > 1.4f) {
+    Serial.printf("# calibration: accel reads %.2f g at rest (expected ~1.0), rejected\n", rest_g);
+    return false;
+  }
   for (int a = 0; a < 3; a++) gyro_bias[a] = sg[a] / got;
+  acc_scale = 1.0f / rest_g;
+  Serial.printf("# accel_rest_g: %.3f -> scale %.3f (so rest reads 1.00 g for the models)\n", rest_g, acc_scale);
+  return true;
+}
+
+// Try up to 5 times (~12 s). A good result is saved to flash; if every try fails (e.g. the watch
+// is being handled while it boots), the last saved calibration is used instead of no correction.
+void calibrateGyro() {
+  Preferences prefs;
+  prefs.begin("sg_calib", false);
+  for (int attempt = 1; attempt <= 5; attempt++) {
+    if (calibrateOnce()) {
+      prefs.putFloat("acc_scale", acc_scale);
+      prefs.putFloat("gb0", gyro_bias[0]); prefs.putFloat("gb1", gyro_bias[1]); prefs.putFloat("gb2", gyro_bias[2]);
+      prefs.end();
+      return;
+    }
+    delay(500);
+  }
+  if (prefs.isKey("acc_scale")) {
+    acc_scale    = prefs.getFloat("acc_scale", 1.0f);
+    gyro_bias[0] = prefs.getFloat("gb0", 0); gyro_bias[1] = prefs.getFloat("gb1", 0); gyro_bias[2] = prefs.getFloat("gb2", 0);
+    Serial.printf("# WARNING: could not calibrate (kept moving), using the SAVED calibration: scale %.3f\n", acc_scale);
+  } else {
+    Serial.println("# WARNING: could not calibrate and nothing saved yet: no correction. Press reset with the watch STILL.");
+  }
+  prefs.end();
 }
 
 #if SELF_TEST
@@ -646,7 +681,9 @@ void loop() {
   next_time += PERIOD_US;                        // schedule the next sample from the plan, not from 'now' (no drift)
 
   int16_t v[7];
-  if (!readSample(v)) {
+  bool ok = readSample(v);
+  for (int tries = 0; !ok && tries < 2; tries++) ok = readSample(v);   // a glitched I2C read: retry (~0.4 ms each) instead of wiping the window
+  if (!ok) {
     read_errors++; sample_index++;               // leave a gap so Python can see it
     ring_filled = 0;
     confirmPending(false);
@@ -662,7 +699,8 @@ void loop() {
   sent++;
 
   // convert to real units for the models (same units as training: g and deg/s, gyro bias removed)
-  float ax = v[0] / ACC_LSB_PER_G, ay = v[1] / ACC_LSB_PER_G, az = v[2] / ACC_LSB_PER_G;
+  const float acc_k = acc_scale / ACC_LSB_PER_G;
+  float ax = v[0] * acc_k, ay = v[1] * acc_k, az = v[2] * acc_k;
   float gx = v[4] / GYRO_LSB_PER_DPS - gyro_bias[0];
   float gy = v[5] / GYRO_LSB_PER_DPS - gyro_bias[1];
   float gz = v[6] / GYRO_LSB_PER_DPS - gyro_bias[2];
