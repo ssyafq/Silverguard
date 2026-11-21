@@ -1,0 +1,10 @@
+# requirements.txt (streaming, PC side): packages to run the streaming tools, tests and
+# dashboard page on your own PC. The Cloud Run container uses server/requirements.txt instead.
+#   .venv\Scripts\python -m pip install -r streaming/requirements.txt
+fastapi>=0.115                 # ingest service (to run it locally)
+uvicorn[standard]>=0.30        # runs the service locally
+httpx>=0.27                    # needed by FastAPI's TestClient in the tests
+pytest>=8                      # runs streaming/tests
+google-cloud-firestore>=2.16   # live_status.py + dashboard reading the real database
+pyserial>=3.5                  # bridge/usb_to_cloud.py (watch over USB)
+streamlit>=1.35                # dashboard/live_page.py

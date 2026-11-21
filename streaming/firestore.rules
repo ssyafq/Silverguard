@@ -1,0 +1,14 @@
+// firestore.rules: who may read/write the Firestore database DIRECTLY (from a browser, phone or watch).
+//
+// Answer: nobody. All access goes through programs that use a service account (the Cloud Run
+// ingest service and the dashboard), and service accounts skip these rules. So a leaked
+// project ID alone gives an attacker nothing.
+// Deploy: Firebase console → Firestore Database → Rules → paste → Publish.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

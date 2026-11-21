@@ -1,0 +1,5 @@
+# requirements.txt (server): Python packages the Cloud Run container installs.
+# Read by the Dockerfile at build time. Only what main.py needs, to keep the container small.
+fastapi>=0.115            # the web framework: turns Python functions into HTTP endpoints
+uvicorn[standard]>=0.30   # the web server that runs the FastAPI app
+google-cloud-firestore>=2.16   # Firestore client (Admin access through the service account)

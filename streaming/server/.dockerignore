@@ -1,0 +1,6 @@
+# .dockerignore: files NOT sent to Google when building the container
+# (keeps secrets and junk out of the image, and makes uploads faster).
+__pycache__/
+*.pyc
+.env
+deploy.ps1

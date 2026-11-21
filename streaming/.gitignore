@@ -1,0 +1,5 @@
+# .gitignore (streaming): files in this folder that must never be committed.
+# stream_config.h holds the real Wi-Fi password and device key (copy it from stream_config.example.h).
+firmware/**/stream_config.h
+server/.env
+__pycache__/
