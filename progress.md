@@ -296,6 +296,11 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ## Part C. Change log (newest first)
 
+### 2026-11-21: Firmware folders renamed + FinalPrototype README
+- `firmware/silverguard_logger/` → `firmware/ESP32(Gyro+model)/`: renamed (gyro + on-device models, no speaker). `silverguard_logger.ino`: I2C pins changed to SDA GPIO 1, SCL GPIO 0 (was 3 / 4).
+- `firmware/FinalPrototype/`: **new**. Copy of `Melv-Codes/ESP32-SpeakerUSBVer/` (sketch, models, bridge scripts, wiring), the version to flash for the demo.
+- `firmware/FinalPrototype/README`: **new**. How to run it: flash `ESP32-SpeakerUSBVer.ino`, check the pin connections, run `python -m basestation.voice.watch_bridge`, and set up `.venv` if libraries are missing.
+
 ### 2026-11-20: Speaker watch: calibration retries + saved in flash
 - `Melv-Codes/ESP32-SpeakerUSBVer/ESP32-SpeakerUSBVer.ino`: after a replug, the watch was moved during its 2 s boot calibration. The calibration was rejected and it fell back to no correction (1.23 g at rest → "Moving"). Calibration now retries up to 5 times. A good result (accel scale + gyro bias) is saved with `Preferences` (namespace `sg_calib`). If every try fails, the saved one is used.
 
