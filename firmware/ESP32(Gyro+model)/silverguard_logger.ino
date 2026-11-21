@@ -20,8 +20,8 @@
 
 // ---------------- settings ----------------
 const char*    FW_VERSION = "silverguard_logger 0.4 (HAR + fall models + wrist-turn + fall-motion checks)";
-const int      SDA_PIN    = 1;          // I2C data  (GPIO 3)
-const int      SCL_PIN    = 0;          // I2C clock (GPIO 4)
+const int      SDA_PIN    = 1;          // I2C data  (GPIO 1)
+const int      SCL_PIN    = 0;          // I2C clock (GPIO 0)
 const uint32_t I2C_HZ     = 400000;     // 400 kHz "fast mode", 14-byte read takes ~0.4 ms
 const uint8_t  MPU_ADDR   = 0x68;       // AD0 pin low -> 0x68 (0x69 if AD0 is high)
 const uint32_t PERIOD_US  = 20000;      // 20 ms between samples = 50 Hz

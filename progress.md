@@ -6,7 +6,7 @@ The running record of **what exists in the project, block by block**, and **ever
 - `context.md` = design and decisions (the *why*).
 - `progress.md` = what has actually been built, file by file, and when it changed (the *what*).
 
-Last full review: **2026-11-17** (last change: 2026-11-20)
+Last full review: **2026-11-17** (last change: 2026-11-21)
 
 ---
 
@@ -31,6 +31,7 @@ Last full review: **2026-11-17** (last change: 2026-11-20)
 | 15 | Placeholders: detection, ingest, rules | n/a | Empty folders | `basestation/detection/`, `ingest/`, `rules/` |
 | 16 | Data folders | n/a | Empty in git (data is git-ignored) | `data/` |
 | 17 | Documentation | Obj 2 | Done | `context.md`, `docs/`, READMEs, `progress.md` |
+| 18 | Live streaming: watch → Cloud Run → Firestore | Obj 2 | **Live on Google Cloud** (project `silverguard-3cde2`), tested end-to-end from a PC; not yet run on the watch | `streaming/` |
 
 ---
 
@@ -292,9 +293,52 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 | `progress.md` | This file. |
 | `firmware/silverguard_logger/README.md`, `basestation/dashboard/README.md` | How-to guides (see Blocks 1 and 11). |
 
+### Block 18. Live streaming: watch → Cloud Run → Firestore
+- **Status:** deployed and working (2026-11-21). Cloud Run service `silverguard-ingest`, region `asia-southeast1`, project `silverguard-3cde2`, Firestore `(default)` database. Test messages sent from a PC were stored in Firestore and shown by `tools/live_status.py`. Not yet run on an ESP32.
+- **Find the URL / key:** `gcloud run services describe silverguard-ingest --region asia-southeast1 --format="value(status.url)"` and `gcloud secrets versions access latest --secret=silverguard-device-keys` (the part after `watch-01=`). Never commit the key.
+- **Where:** `streaming/`. Everything streaming-related is in this folder. `streaming/README.md` explains the architecture and has a table of every file. Each file starts with a "what this file does" note.
+- **What it does:** sends the still/moving state only when it changes (3 s debounce), confirmed falls straight away, and a heartbeat every 60 s, over HTTPS to a Cloud Run service (`server/main.py`), which writes to Firestore.
+- **Ways to send:** `firmware/watch_streaming/` (full FinalPrototype firmware + Wi-Fi, 4 `STREAMING:` lines), `firmware/stream_demo/` (test sketch, no sensor), or `bridge/usb_to_cloud.py` (USB watch → PC → cloud, the stopgap).
+- **Ways to read:** `dashboard/firestore_source.py` (shared read functions), `dashboard/live_page.py` (Streamlit), `tools/live_status.py` (terminal).
+- **Next:**
+  1. Make a new device key (`deploy.ps1 -NewKey`): the current one appeared in a screenshot.
+  2. Test Wi-Fi with `stream_demo` (2.4 GHz network).
+  3. Flash `watch_streaming` (Huge APP) and check sampling has no extra gaps.
+  4. Telegram fall alert from Cloud Run.
+  5. Port `basestation/dashboard/` to Firestore.
+  6. Team agrees on the change history replacing `activity_days`.
+
 ---
 
 ## Part C. Change log (newest first)
+
+### 2026-11-21: Streaming deployed to Google Cloud and tested end-to-end
+- Ran `streaming/server/deploy.ps1 -Project silverguard-3cde2`. Cloud Run service `silverguard-ingest` (asia-southeast1), Firestore database, device key in Secret Manager (`silverguard-device-keys`).
+- Test: `tools/send_test_event.py` → Cloud Run returned `200` → both messages found in Firestore (`devices/watch-01`, 2 docs in `transitions/`) → shown by `tools/live_status.py` (OFFLINE after 2.5 min with no heartbeat, as designed).
+- `streaming/README.md`: status updated to deployed.
+- Note: leaving `live_status.py` running every 5 s all day costs about 52k reads, over the 50k/day free tier. Stop it with Ctrl+C, or use `--every 30`.
+
+### 2026-11-21: Small firmware fixes committed
+- `firmware/ESP32(Gyro+model)/silverguard_logger.ino`: pin comments corrected to GPIO 1 / GPIO 0 (the values were already right).
+- `firmware/FinalPrototype/README` → `README.md`: renamed so GitHub shows it formatted.
+
+### 2026-11-21: `streaming/server/deploy.ps1` fixed: stopped on a success message
+- gcloud writes progress messages to the error stream. In Windows PowerShell 5.1, with `$ErrorActionPreference = "Stop"` and the `gcloud.ps1` wrapper, "Updated IAM policy for secret" (a success) stopped the script at step 4, before the deploy.
+- The script now calls `gcloud.cmd` directly, doesn't stop on messages, and checks each call's exit code (`Step`). Also enables the Artifact Registry API (needed by `--source` deploys) and prints the URL plus how to read the key at the end.
+
+### 2026-11-21: `streaming/` folder rebuilt and completed (Block 18)
+- The first version (created 2026-11-20, never committed) was lost: two `git reset` runs after it was made left only `__pycache__` files. Rebuilt from the session, then extended.
+- Every file now starts with a "what this file does" explanation (the copied model headers got a one-line note).
+- **Rebuilt:** `README.md`, `.gitignore`, `firestore.rules`, `server/main.py`, `server/requirements.txt`, `server/Dockerfile`, `server/.dockerignore`, `firmware/stream_demo/` (`silverguard_stream.h`, `stream_config.example.h`, `stream_demo.ino`), `tools/send_test_event.py`, `tools/live_status.py`, `tests/test_ingest.py`.
+- **New:**
+  - `requirements.txt` (PC side).
+  - `server/.env.example`, `server/deploy.ps1` (one-command Google Cloud setup + deploy).
+  - `firmware/watch_streaming/` (copy of `firmware/FinalPrototype/` + 4 `STREAMING:` lines + model headers).
+  - `bridge/usb_to_cloud.py` (USB stopgap with the same debounce and a retry queue).
+  - `dashboard/firestore_source.py`, `dashboard/live_page.py`.
+  - `tools/ingest_client.py` (shared Python sender).
+  - `tests/test_bridge.py`, `tests/test_firestore_source.py`.
+- 32 tests pass. Local server smoke test passes (200 stored, 401 wrong key, 0 server unreachable). `firmware/FinalPrototype/` itself is not changed. Both sketches compile for ESP32-C3 (Huge APP partition): `stream_demo` 1.15 MB, `watch_streaming` 1.30 MB (99% of the default partition, so Huge APP is required).
 
 ### 2026-11-21: Firmware folders renamed + FinalPrototype README
 - `firmware/silverguard_logger/` → `firmware/ESP32(Gyro+model)/`: renamed (gyro + on-device models, no speaker). `silverguard_logger.ino`: I2C pins changed to SDA GPIO 1, SCL GPIO 0 (was 3 / 4).

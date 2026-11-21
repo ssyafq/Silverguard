@@ -22,31 +22,53 @@ param(
     [string]$DeviceId = "watch-01",
     [switch]$NewKey
 )
-$ErrorActionPreference = "Stop"
+# gcloud prints normal progress messages on the ERROR stream. Windows PowerShell 5.1 shows those
+# as red "NativeCommandError" records and, with "Stop", would quit on a success message. So:
+# don't stop on messages; judge every gcloud call by its exit code instead (Step below).
+$ErrorActionPreference = "Continue"
 Set-Location $PSScriptRoot
 
+# Use gcloud.cmd, not the gcloud.ps1 wrapper (the wrapper turns progress messages into errors).
+$G = (Get-Command gcloud.cmd -ErrorAction SilentlyContinue).Source
+if (-not $G) { $G = "$env:LOCALAPPDATA\Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd" }
+if (-not (Test-Path $G)) {
+    Write-Host "gcloud not found. Install the Google Cloud CLI, then reopen VS Code." -ForegroundColor Red
+    exit 1
+}
+
+function Step([string]$what) {
+    # call right after a gcloud command: stop the script only if it really failed
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "FAILED: $what (gcloud exit code $LASTEXITCODE). Read the message above." -ForegroundColor Red
+        exit 1
+    }
+}
+
 Write-Host "== 1. Project + services"
-gcloud config set project $Project
-gcloud services enable run.googleapis.com firestore.googleapis.com secretmanager.googleapis.com cloudbuild.googleapis.com
+& $G config set project $Project;                                   Step "set project"
+& $G services enable run.googleapis.com firestore.googleapis.com secretmanager.googleapis.com `
+    cloudbuild.googleapis.com artifactregistry.googleapis.com;     Step "enable services (is billing linked?)"
 
 Write-Host "== 2. Firestore database ($Region)"
-$dbs = gcloud firestore databases list --format="value(name)" 2>$null
-if (-not $dbs) { gcloud firestore databases create --location=$Region }
+$dbs = & $G firestore databases list --format="value(name)";        Step "list Firestore databases"
+if (-not $dbs) { & $G firestore databases create --location=$Region; Step "create Firestore database" }
 else { Write-Host "   already exists, skipped" }
 
 Write-Host "== 3. Device key in Secret Manager"
 $secret = "silverguard-device-keys"
-$exists = $true
-try { gcloud secrets describe $secret *> $null; if ($LASTEXITCODE -ne 0) { $exists = $false } } catch { $exists = $false }
+$found = & $G secrets list --filter="name~/$secret`$" --format="value(name)"; Step "list secrets"
+$exists = [bool]$found
 if (-not $exists -or $NewKey) {
     $bytes = New-Object byte[] 24
     [System.Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
     $key = [Convert]::ToBase64String($bytes).Replace("+", "-").Replace("/", "_").TrimEnd("=")
     $tmp = New-TemporaryFile
     Set-Content -Path $tmp -Value "$DeviceId=$key" -NoNewline -Encoding ascii
-    if ($exists) { gcloud secrets versions add $secret --data-file=$tmp }
-    else         { gcloud secrets create  $secret --data-file=$tmp }
+    if ($exists) { & $G secrets versions add $secret --data-file=$tmp }
+    else         { & $G secrets create  $secret --data-file=$tmp }
+    $code = $LASTEXITCODE
     Remove-Item $tmp
+    $global:LASTEXITCODE = $code; Step "store device key"
     Write-Host ""
     Write-Host "   NEW DEVICE KEY for $DeviceId (put it in stream_config.h as STREAM_DEVICE_KEY):"
     Write-Host "   $key" -ForegroundColor Yellow
@@ -55,17 +77,21 @@ if (-not $exists -or $NewKey) {
 } else { Write-Host "   already exists, kept (use -NewKey to replace)" }
 
 Write-Host "== 4. Let Cloud Run read the secret"
-$num = gcloud projects describe $Project --format="value(projectNumber)"
-gcloud secrets add-iam-policy-binding $secret `
+$num = & $G projects describe $Project --format="value(projectNumber)"; Step "read project number"
+& $G secrets add-iam-policy-binding $secret `
     --member="serviceAccount:$num-compute@developer.gserviceaccount.com" `
-    --role="roles/secretmanager.secretAccessor" *> $null
+    --role="roles/secretmanager.secretAccessor" --condition=None | Out-Null
+Step "give Cloud Run access to the secret"
 
-Write-Host "== 5. Build + deploy (takes a few minutes the first time)"
-gcloud run deploy $Service --source . --region $Region --allow-unauthenticated `
-    --set-secrets "DEVICE_KEYS=${secret}:latest"
+Write-Host "== 5. Build + deploy (takes a few minutes the first time; answer y if asked)"
+& $G run deploy $Service --source . --region $Region --allow-unauthenticated `
+    --set-secrets "DEVICE_KEYS=${secret}:latest";                  Step "deploy to Cloud Run"
 
-$url = gcloud run services describe $Service --region $Region --format="value(status.url)"
+$url = & $G run services describe $Service --region $Region --format="value(status.url)"
 Write-Host ""
-Write-Host "Done. In stream_config.h set:" -ForegroundColor Green
+Write-Host "Done. Service URL: $url" -ForegroundColor Green
+Write-Host "In stream_config.h set:"
 Write-Host "  #define STREAM_URL `"$url/ingest`""
-Write-Host "Test it:  python ..\tools\send_test_event.py --url $url --key <device key> activity moving"
+Write-Host "Device key:  gcloud secrets versions access latest --secret=$secret   (the part after '$DeviceId=')"
+Write-Host "Test it (from the project root, put the real key, no brackets):"
+Write-Host "  .venv\Scripts\python streaming/tools/send_test_event.py --url $url --key YOUR-KEY activity moving"

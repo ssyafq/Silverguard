@@ -6,11 +6,11 @@
 Everything to do with sending the watch's live data online lives in this folder. Nothing outside `streaming/` is changed by it.
 
 **Status (2026-11-21):**
-- The server is written and tested locally.
+- **Live on Google Cloud:** project `silverguard-3cde2`, Cloud Run service `silverguard-ingest` (asia-southeast1). Tested end-to-end from a PC: test message → Cloud Run → Firestore → `live_status.py`.
 - The ESP32 code compiles for the ESP32-C3.
 - The USB bridge, dashboard page and terminal viewer are written.
 - 32 tests pass.
-- **Not yet done:** deployed to Google Cloud, or run on the real watch.
+- **Not yet done:** run on an ESP32.
 
 ---
 
@@ -196,7 +196,9 @@ Arduino needs every file in the sketch's own folder, so some files exist twice:
 ## 8. Open items
 
 - [ ] Team agrees on the change history replacing `activity_days` (`context.md` §4).
-- [ ] Deploy (`deploy.ps1`) and check end-to-end with `stream_demo`.
+- [x] Deploy (`deploy.ps1`): done 2026-11-21, tested from a PC.
+- [ ] Make a new device key (`deploy.ps1 -NewKey`) before real use.
+- [ ] Check end-to-end with `stream_demo` on an ESP32.
 - [ ] Flash `watch_streaming` and check that sampling has no extra gaps.
 - [ ] Pin the server certificate (`STREAM_ROOT_CA`) instead of `setInsecure()`.
 - [ ] Telegram alert from Cloud Run on a fall (TODO in `server/main.py`).
