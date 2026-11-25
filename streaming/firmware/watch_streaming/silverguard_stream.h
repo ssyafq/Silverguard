@@ -44,6 +44,9 @@
 #ifndef STREAM_FALL_DETECTOR
 #define STREAM_FALL_DETECTOR   "fall_rf30_v0.5"
 #endif
+#ifndef STREAM_WIFI_TX_POWER
+#define STREAM_WIFI_TX_POWER   WIFI_POWER_8_5dBm   // SuperMini fix; WIFI_POWER_19_5dBm = full power
+#endif
 #ifndef STREAM_LOG
 #define STREAM_LOG             1          // 0 = silent
 #endif
@@ -139,6 +142,17 @@ static bool post(WiFiClientSecure& tls, const Msg& m) {
   return false;
 }
 
+static const char* wifiWhy() {
+  switch (WiFi.status()) {
+    case WL_NO_SSID_AVAIL:   return "network name not found (wrong STREAM_WIFI_SSID, out of range, or 5 GHz only)";
+    case WL_CONNECT_FAILED:  return "connection refused (wrong STREAM_WIFI_PASSWORD?)";
+    case WL_CONNECTION_LOST: return "connection lost";
+    case WL_DISCONNECTED:    return "still trying (if this lasts: wrong password or weak signal)";
+    case WL_IDLE_STATUS:     return "starting";
+    default:                 return "unknown";
+  }
+}
+
 static void netTask(void*) {
   WiFiClientSecure tls;
 #ifdef STREAM_ROOT_CA
@@ -146,15 +160,20 @@ static void netTask(void*) {
 #else
   tls.setInsecure();                         // prototype only: encrypted but the server is not verified
 #endif
-  uint32_t last_hb = millis(), backoff = 1000;
+  uint32_t last_hb = millis(), backoff = 1000, last_why = 0;
   bool was_up = false;
 
   for (;;) {
     bool up = WiFi.status() == WL_CONNECTED;
     if (up != was_up) {
-      if (up) SG_LOG("# stream: Wi-Fi up, IP %s\n", WiFi.localIP().toString().c_str());
+      if (up) SG_LOG("# stream: Wi-Fi up, IP %s, signal %d dBm\n", WiFi.localIP().toString().c_str(), WiFi.RSSI());
       else    SG_LOG("# stream: Wi-Fi down, messages are queued\n");
       was_up = up;
+    }
+    if (!up && millis() - last_why >= 10000) {   // every 10 s while down: say why
+      last_why = millis();
+      SG_LOG("# stream: Wi-Fi not connected: %s (%u waiting)\n", wifiWhy(),
+             (unsigned)uxQueueMessagesWaiting(q));
     }
 
     if (millis() - last_hb >= STREAM_HEARTBEAT_MS) {
@@ -189,6 +208,9 @@ inline void begin() {
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
   WiFi.begin(STREAM_WIFI_SSID, STREAM_WIFI_PASSWORD);   // non-blocking: the task waits for it
+  // ESP32-C3 SuperMini boards have a poorly matched antenna: at full power many fail to join
+  // Wi-Fi at all. 8.5 dBm is the usual fix and still reaches across a room or two.
+  WiFi.setTxPower(STREAM_WIFI_TX_POWER);
   // ESP32-C3 has ONE core: same priority as loop() (1) so the two share the CPU by time slices.
   // A lower priority would starve if loop() never blocks.
   xTaskCreate(netTask, "sgstream", 8192, nullptr, 1, nullptr);

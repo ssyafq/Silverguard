@@ -312,6 +312,16 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ## Part C. Change log (newest first)
 
+### 2026-11-24: First real ESP32 → Wi-Fi → Cloud Run → Firestore message
+- `stream_demo` flashed to the ESP32-C3 (COM7). It connected (signal −56 dBm) and its first "still" change (`01ae3595-0`) plus heartbeats reached Firestore.
+- **Problem found:** the first Wi-Fi was a phone hotspot on **5 GHz + WPA3 only**, which the ESP32-C3 cannot use (2.4 GHz only). The board kept retrying with nothing sent. Fixed by switching the hotspot to 2.4 GHz.
+- `streaming/firmware/*/silverguard_stream.h` (both copies):
+  - while Wi-Fi is down, prints the reason every 10 s (network not found / wrong password / still trying);
+  - "Wi-Fi up" line shows the signal strength;
+  - transmit power set to 8.5 dBm (`STREAM_WIFI_TX_POWER`), the usual fix for ESP32-C3 SuperMini antennas.
+- `watch_streaming/stream_config.h` created from the working demo config (git-ignored).
+- Next: try `m` / `s` / `f` in the demo, then flash `watch_streaming`.
+
 ### 2026-11-21: Streaming deployed to Google Cloud and tested end-to-end
 - Ran `streaming/server/deploy.ps1 -Project silverguard-3cde2`. Cloud Run service `silverguard-ingest` (asia-southeast1), Firestore database, device key in Secret Manager (`silverguard-device-keys`).
 - Test: `tools/send_test_event.py` → Cloud Run returned `200` → both messages found in Firestore (`devices/watch-01`, 2 docs in `transitions/`) → shown by `tools/live_status.py` (OFFLINE after 2.5 min with no heartbeat, as designed).
