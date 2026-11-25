@@ -4,6 +4,7 @@
     python -m basestation.voice.watch_bridge --port COM5
     python -m basestation.voice.watch_bridge --manual        # press Enter to test a check-in, no fall needed
     python -m basestation.voice.watch_bridge --laptop-audio  # old firmware: laptop speaker + mic instead
+    python -m basestation.voice.watch_bridge --host 172.20.10.13   # Waveshare watch over Wi-Fi (firmware/espwatch_prototype)
 
 Flow:  drop/fall the watch → firmware prints "FALL DETECTED" and pauses
        → watch speaker says "Are you okay?" → watch mic records the reply (streamed to the laptop)
@@ -38,7 +39,9 @@ from basestation.voice.demo import handle_event
 from basestation.voice.settings import dashboard_config
 
 FALL_MARKERS = ("FALL DETECTED", "# EVENT FALL")
-DETECTOR = "ESP32-SpeakerUSBVer v0.5 (USB)"
+DETECTOR_USB = "ESP32-SpeakerUSBVer v0.5 (USB)"
+DETECTOR_WIFI = "espwatch_prototype v0.6 (Wi-Fi)"
+DETECTOR = DETECTOR_USB
 
 
 # ---------- route speak / listen through the watch's speaker + mic ----------
@@ -46,7 +49,7 @@ DETECTOR = "ESP32-SpeakerUSBVer v0.5 (USB)"
 def _watch_play_file(path) -> None:
     data, samplerate = sf.read(str(path), dtype="float32")
     if not esp32_audio.play_audio(data, samplerate):
-        raise RuntimeError("watch speaker playback failed over USB")
+        raise RuntimeError("watch speaker playback failed")
 
 
 def _watch_speak_offline(text: str, lang: str) -> None:
@@ -75,7 +78,7 @@ def _watch_speak_offline(text: str, lang: str) -> None:
 def _watch_record(seconds: float):
     audio = esp32_audio.record_audio(seconds, samplerate=listen.SAMPLE_RATE)
     if audio is None:
-        raise RuntimeError("watch mic recording failed over USB")
+        raise RuntimeError("watch mic recording failed")
     return audio
 
 
@@ -103,15 +106,24 @@ def run_check_in(cloud: Cloud, ser: serial.Serial, source: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Watch over USB -> voice check-in -> Telegram alert")
     parser.add_argument("--port", default="auto", help="watch COM port, e.g. COM5 (default: auto-detect)")
+    parser.add_argument("--host", help="watch IP or espwatch.local: connect over Wi-Fi instead of USB")
     parser.add_argument("--manual", action="store_true", help="press Enter to run a check-in instead of waiting for a fall")
     parser.add_argument("--laptop-audio", action="store_true", help="use the laptop speaker + mic (old v0.4 firmware)")
     parser.add_argument("--quiet", action="store_true", help="don't echo the watch's lines")
     args = parser.parse_args()
 
-    ser = esp32_audio.get_serial(args.port)
-    if ser is None:
-        sys.exit("Couldn't open the watch's COM port.\n"
-                 "1. Plug the watch in.  2. Close the Arduino Serial Monitor.  3. Try --port COMx.")
+    global DETECTOR
+    if args.host:
+        DETECTOR = DETECTOR_WIFI
+        ser = esp32_audio.get_serial(f"tcp:{args.host}")
+        if ser is None:
+            sys.exit(f"Couldn't reach the watch at {args.host} over Wi-Fi.\n"
+                     "1. Laptop and watch on the same hotspot.  2. Use the IP the watch prints on USB at boot.")
+    else:
+        ser = esp32_audio.get_serial(args.port)
+        if ser is None:
+            sys.exit("Couldn't open the watch's COM port.\n"
+                     "1. Plug the watch in.  2. Close the Arduino Serial Monitor.  3. Try --port COMx.")
     if not args.laptop_audio:
         use_watch_audio()
 
@@ -145,7 +157,8 @@ def main() -> None:
     except KeyboardInterrupt:
         pass
     except serial.SerialException as e:
-        print(f"\nLost the watch ({type(e).__name__}). Was the cable unplugged?")
+        print(f"\nLost the watch ({e}). " +
+              ("Is it switched on and on the hotspot?" if args.host else "Was the cable unplugged?"))
         sent, info = telegram.send_alert(
             f"⚠️ SilverGuard: lost connection to {dashboard_config()['elder_name']}'s watch. "
             "Falls are NOT being detected until it is reconnected.")

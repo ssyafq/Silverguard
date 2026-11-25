@@ -1,11 +1,11 @@
 """Audio bridge to the ESP32 watch (MAX98357A speaker + INMP441 microphone).
 
-Current transport: USB Serial (`ESP32_PORT` in `.env` or `voice.esp32_port` in `config.yaml`,
-or auto-detected USB serial port).
-Future transport: Wi-Fi (HTTP / WebSocket) can implement the same `play_audio()` and
-`record_audio()` functions without changing `speak.py` or `listen.py`.
+Transports:
+  * USB Serial (`ESP32_PORT` in `.env` or `voice.esp32_port` in `config.yaml`, or auto-detected port).
+  * Wi-Fi: `ESP32_PORT=tcp:<watch ip>` (or watch_bridge --host): a TCP socket to the Waveshare watch
+    running firmware/espwatch_prototype. Same bytes as over USB.
 
-Serial protocol (16 kHz, 16-bit signed mono PCM):
+Protocol (16 kHz, 16-bit signed mono PCM), the same on both transports:
   * Play chunk (PC → ESP32 speaker):
       b'P' + uint16_le(n_samples) + int16_le[n_samples]  → ESP32 replies b'K'
   * Record chunk (ESP32 mic → PC):
@@ -57,8 +57,83 @@ def find_esp32_port() -> Optional[str]:
     return ports[0].device
 
 
+class WifiLink:
+    """The watch over Wi-Fi (firmware/espwatch_prototype, TCP port 3333), with the parts of the
+    pyserial API this module and watch_bridge use. The bytes are the same as over USB."""
+
+    def __init__(self, host: str, port: int = 3333, timeout: float = 2.0):
+        import socket
+        self.port = f"{host}:{port} (Wi-Fi)"
+        self.timeout = timeout
+        self._buf = bytearray()
+        try:
+            self._sock = socket.create_connection((host, port), timeout=5)
+        except OSError as exc:
+            raise serial.SerialException(f"could not reach the watch at {host}:{port}: {exc}") from exc
+        self._sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        self.is_open = True
+
+    def _fill(self, timeout: float) -> bool:
+        """Wait up to `timeout` s for more bytes. False on timeout; raises if the watch is gone."""
+        import socket
+        self._sock.settimeout(max(timeout, 0.001))
+        try:
+            chunk = self._sock.recv(65536)
+        except socket.timeout:
+            return False
+        except OSError as exc:
+            raise serial.SerialException(f"Wi-Fi link to the watch lost: {exc}") from exc
+        if not chunk:
+            raise serial.SerialException("the watch closed the Wi-Fi connection")
+        self._buf.extend(chunk)
+        return True
+
+    def read(self, size: int = 1) -> bytes:
+        deadline = time.perf_counter() + self.timeout
+        while len(self._buf) < size and self._fill(deadline - time.perf_counter()):
+            pass
+        out = bytes(self._buf[:size])
+        del self._buf[:size]
+        return out
+
+    def readline(self) -> bytes:
+        deadline = time.perf_counter() + self.timeout
+        while b"\n" not in self._buf and self._fill(deadline - time.perf_counter()):
+            pass
+        end = self._buf.find(b"\n") + 1 or len(self._buf)
+        out = bytes(self._buf[:end])
+        del self._buf[:end]
+        return out
+
+    def write(self, data: bytes) -> int:
+        try:
+            self._sock.sendall(data)
+        except OSError as exc:
+            raise serial.SerialException(f"Wi-Fi link to the watch lost: {exc}") from exc
+        return len(data)
+
+    def flush(self) -> None:
+        pass                                     # sendall() already handed everything to the network
+
+    def reset_input_buffer(self) -> None:
+        """Drop everything received so far (like pyserial), without waiting."""
+        self._buf.clear()
+        while self._fill(0.001):
+            self._buf.clear()
+
+    def close(self) -> None:
+        self.is_open = False
+        try:
+            self._sock.close()
+        except OSError:
+            pass
+
+
 def get_serial(port: Optional[str] = None) -> Optional[serial.Serial]:
-    """Return an open serial connection to the ESP32, or None if disabled/unavailable."""
+    """Return an open connection to the ESP32, or None if disabled/unavailable.
+
+    `port` is a COM port ('COM5', 'auto') or, for the Wi-Fi watch, 'tcp:<ip or name>' (e.g. 'tcp:172.20.10.13').
+    """
     global _ser
     if _ser is not None and _ser.is_open:
         return _ser
@@ -66,6 +141,13 @@ def get_serial(port: Optional[str] = None) -> Optional[serial.Serial]:
     target = port or configured_port()
     if not target or target.lower() in ("none", "off", "laptop", "false"):
         return None
+    if target.lower().startswith("tcp:"):
+        try:
+            _ser = WifiLink(target[4:].strip())
+            return _ser
+        except serial.SerialException as exc:
+            print(f"  [esp32_audio] {exc}")
+            return None
     if target.lower() == "auto":
         target = find_esp32_port()
         if not target:

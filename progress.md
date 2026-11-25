@@ -312,6 +312,31 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ## Part C. Change log (newest first)
 
+### 2026-11-24: `firmware/espwatch_prototype/`: the FinalPrototype on the Waveshare watch, over Wi-Fi
+- `firmware/espwatch_prototype/espwatch_prototype.ino`: new sketch, built from `Melv-Codes/esp_watch` (QMI8658, models, AMOLED screen, touch, BOOT button).
+  - Adds the FinalPrototype's voice protocol (`P` play → `K`, `L` record → `M` + PCM, `r` resume, `b` speaker test, `m` mic test), running on the watch's ES8311 codec. That codec setup follows Espressif's es8311 sequence, with pins from Waveshare's `08_ES8311` example.
+  - The link is a TCP server on port 3333 (`espwatch.local`). Every text line goes to both USB and the laptop.
+  - The Railway HTTP sender has been removed, because the laptop sends the alerts. Messages that contained `K`/`M` during a check-in were reworded so they can't be mistaken for audio replies.
+  - Not yet flashed or tested on hardware.
+  - Compile fix: `Serial.setTxTimeoutMs(0)` now only builds when USB CDC On Boot is Enabled. With it Disabled, `Serial` is a plain hardware serial port that doesn't have this function.
+- `firmware/espwatch_prototype/{fall_features,fall_model,fall_model_trees,har_model,test_vectors}.h`: copied unchanged (identical to FinalPrototype).
+- `firmware/espwatch_prototype/wifi_config.example.h` and `README.md`: new files.
+- `basestation/voice/esp32_audio.py`: new `WifiLink` (a TCP socket with the pyserial calls it needs). `get_serial("tcp:<host>")` now connects over Wi-Fi. USB behaviour is unchanged.
+- `basestation/voice/watch_bridge.py`: new `--host` option for the Wi-Fi watch, with Wi-Fi-specific messages and a Wi-Fi detector name.
+- Tested against a simulated watch (lines, play 16000 samples, record 1 s, resume, disconnect). All 98 tests still pass.
+- `.gitignore`: added `firmware/espwatch_prototype/wifi_config.h`.
+
+### 2026-11-24: `espwatch/` now records over Wi-Fi; windows cut on the laptop
+- `espwatch/espwatch.ino`: rewritten. A FreeRTOS task samples at 50 Hz into a 60 s buffer. `loop()` sends one CSV row per sample over TCP (port 3333, `espwatch.local`) when `wifi_config.h` exists, and over USB otherwise. If the laptop reconnects within 60 s, nothing is lost. Windowing has moved off the watch.
+- `espwatch/capture_csv.py`: rewritten. Connects with `--host` (Wi-Fi, reconnects by itself) or `--port` (USB). Writes `<out>_raw.csv` plus `<out>_windows.csv`, using `--mode har` (128/64) or `--mode fall` (125/62). Window starts were checked to match the training `np.arange(0, n-win+1, hop)`, and a window is never built across a gap. Also tested against a fake watch with a gap and a disconnect.
+- `espwatch/wifi_config.example.h`: new file, a template for the hotspot SSID and password.
+- `.gitignore`: added `espwatch/wifi_config.h`.
+
+### 2026-11-24: `espwatch/` IMU window recorder (CSV) for the Waveshare watch
+- `espwatch/espwatch.ino`: new sketch. Reads the QMI8658 at 50 Hz with the same settings as the watch firmware (±16 g, ±2048 dps, ODR ~62.5 Hz, LPF on, gyro bias removed at boot). Prints overlapping windows as CSV, cut the same way as training: HAR mode 128 samples with a hop of 64 (default), fall mode 125 samples with a hop of 62. A gap restarts the window. Serial commands: `0`–`9` sets the label, `p` pauses, `h` reprints the header.
+- `espwatch/capture_csv.py`: new script. Saves the serial CSV to a file (pyserial) and skips the `#` lines.
+- `espwatch/README.md`: new file. Explains how to run it and what the columns mean.
+
 ### 2026-11-24: First real ESP32 → Wi-Fi → Cloud Run → Firestore message
 - `stream_demo` flashed to the ESP32-C3 (COM7). It connected (signal −56 dBm) and its first "still" change (`01ae3595-0`) plus heartbeats reached Firestore.
 - **Problem found:** the first Wi-Fi was a phone hotspot on **5 GHz + WPA3 only**, which the ESP32-C3 cannot use (2.4 GHz only). The board kept retrying with nothing sent. Fixed by switching the hotspot to 2.4 GHz.
