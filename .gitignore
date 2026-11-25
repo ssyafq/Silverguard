@@ -24,3 +24,5 @@ Melv-Codes/**/*.wav
 # espwatch: real Wi-Fi password
 espwatch/wifi_config.h
 firmware/espwatch_prototype/wifi_config.h
+
+**/wifi_config.h
