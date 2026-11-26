@@ -1,0 +1,13 @@
+,,A,B,task,A better for (of 151),mean kappa A - B,95% range,verdict,A better for (of 30)
+cross-validation,0,XGB+HMM,RF+HMM,4-class,80.0,-0.0039,-0.010 to +0.002,tie,
+cross-validation,1,XGB+HMM,RF+HMM,binary,94.0,0.019,+0.010 to +0.030,A better,
+cross-validation,2,RF+HMM,CNN+HMM,4-class,105.0,0.0392,+0.028 to +0.051,A better,
+cross-validation,3,RF+HMM,CNN+HMM,binary,79.0,-0.0014,-0.015 to +0.012,tie,
+cross-validation,4,XGB+HMM,CNN+HMM,4-class,100.0,0.0353,+0.023 to +0.048,A better,
+cross-validation,5,XGB+HMM,CNN+HMM,binary,92.0,0.0176,+0.003 to +0.033,A better,
+single test,0,XGB+HMM,RF+HMM,4-class,,0.0024,-0.012 to +0.017,tie,19.0
+single test,1,XGB+HMM,RF+HMM,binary,,0.0228,-0.002 to +0.055,tie,16.0
+single test,2,RF+HMM,CNN+HMM,4-class,,0.0501,+0.020 to +0.083,A better,22.0
+single test,3,RF+HMM,CNN+HMM,binary,,0.013,-0.025 to +0.051,tie,18.0
+single test,4,XGB+HMM,CNN+HMM,4-class,,0.0526,+0.027 to +0.082,A better,25.0
+single test,5,XGB+HMM,CNN+HMM,binary,,0.0358,+0.003 to +0.072,A better,18.0

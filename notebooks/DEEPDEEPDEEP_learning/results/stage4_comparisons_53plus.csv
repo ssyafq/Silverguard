@@ -1,0 +1,7 @@
+A,B,task,A better for (of 34),mean kappa A - B,95% range,verdict
+XGB+HMM,RF+HMM,4-class,23,0.0052,-0.011 to +0.022,tie
+XGB+HMM,RF+HMM,binary,26,0.0356,+0.016 to +0.062,A better
+RF+HMM,CNN+HMM,4-class,26,0.0596,+0.034 to +0.089,A better
+RF+HMM,CNN+HMM,binary,17,-0.0227,-0.059 to +0.009,tie
+XGB+HMM,CNN+HMM,4-class,27,0.0648,+0.038 to +0.094,A better
+XGB+HMM,CNN+HMM,binary,20,0.0129,-0.018 to +0.042,tie

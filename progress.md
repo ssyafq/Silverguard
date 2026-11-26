@@ -6,7 +6,7 @@ The running record of **what exists in the project, block by block**, and **ever
 - `context.md` = design and decisions (the *why*).
 - `progress.md` = what has actually been built, file by file, and when it changed (the *what*).
 
-Last full review: **2026-11-17** (last change: 2026-11-21)
+Last full review: **2026-11-17** (last change: 2026-11-26)
 
 ---
 
@@ -32,6 +32,7 @@ Last full review: **2026-11-17** (last change: 2026-11-21)
 | 16 | Data folders | n/a | Empty in git (data is git-ignored) | `data/` |
 | 17 | Documentation | Obj 2 | Done | `context.md`, `docs/`, READMEs, `progress.md` |
 | 18 | Live streaming: watch → Cloud Run → Firestore | Obj 2 | **Live on Google Cloud** (project `silverguard-3cde2`), tested end-to-end from a PC; not yet run on the watch | `streaming/` |
+| 19 | Activity model v2: Capture-24 forest / CNN / XGBoost + HMM, cross-validation, GOTOV + HAR70+ tests, axis alignment, C export | Obj 2 | **Done on datasets; exported to C; not yet on the watch** | `notebooks/DEEPDEEPDEEP_learning/` (to be renamed `notebooks/still-moving/`) |
 
 ---
 
@@ -147,6 +148,8 @@ Last full review: **2026-11-17** (last change: 2026-11-21)
 
 **Result:** on the wrist (Capture-24), the UCI model, the Capture-24 model and the one-rule baseline all score about **0.74 balanced accuracy**, a tie. Decision: the simple `mag_std` threshold for now.
 
+**Update 2026-11-26:** superseded by Block 19. With 30 s windows, 16 features, XGBoost and an HMM, the new model beats this one in daily life (still vs moving kappa 0.739 vs 0.626 on 30 held-out Capture-24 people, run through the firmware's own `har_model.h`). The old model stays better when standing should count as still (see `notebooks/DEEPDEEPDEEP_learning/OLD_VS_NEW_MODEL.md`).
+
 ---
 
 ### Block 6. Still/moving model: stronger-feature experiments
@@ -160,6 +163,8 @@ Last full review: **2026-11-17** (last change: 2026-11-21)
 | `feature_sets.py` (800 lines) | The experiment code: feature groups, window lengths, `run_cv` (GroupKFold on 140 training people), `lock_candidates` (saves the chosen set before any held-out data loads), `run_final`, `bootstrap_gain`, block-level false alerts, ESP32 cost estimate, `self_test`. |
 
 **Result:** the locked candidate (20 trees, depth 8, 10 s windows, 16 features) gained **+6.0 points** on 11 held-out Capture-24 people (0.740 → 0.800) but **−1.0** on GOTOV (0.925 → 0.915). It **fails** the pre-set rule, so the threshold is kept. Estimated ESP32 cost: 1.8% CPU, 10.7 kB RAM, 116 kB flash.
+
+**Note 2026-11-26:** Block 19 found GOTOV's wrist sensor is turned half a turn around its x axis compared with Capture-24's. With the axes lined up, still-vs-moving kappa on GOTOV rose from 0.895 to 0.990. The −1.0 on GOTOV here may be that axis problem rather than the features: worth re-checking.
 
 ---
 
@@ -263,6 +268,7 @@ Last full review: **2026-11-17** (last change: 2026-11-21)
 | `esp32_recordings/record_session.py` | Logs the early activity sketch (Block 2) over serial (COM5) and lets you type labels as you go. |
 | `esp32_recordings/analyse.py` | Groups results into still/moving runs and lines them up with the typed labels. |
 | `esp32_recordings/log.txt`, `labels.csv` | One short sample log (sensor still, std about 0.002 g); labels file is empty. |
+| `HOW_TO_RECORD.md` | **New 2026-11-26.** Step-by-step guide for recording watch data to test the activity models: firmware switch (`RAW_STREAM 1`), how to wear the watch, file naming (the name is the label), the 6-position calibration, 3–5 min per activity, long normal wear for the axis setup, a log sheet, running `test_watch_recording.py`, troubleshooting, safety and privacy. |
 
 ---
 
@@ -310,7 +316,44 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 
 ---
 
+### Block 19. Activity model v2 (still / moving and 4 activity levels)
+**Folder:** `notebooks/DEEPDEEPDEEP_learning/` (to be renamed `notebooks/still-moving/`; the rename failed while VS Code had the folder open) · **Status:** done on datasets, exported to C, not yet on the watch
+
+Built to the spec "small 1D CNN vs random forest on Capture-24, fairly compared", then extended. Every notebook has a beginner's "How this works" section, and the later ones check their own written conclusions against the numbers.
+
+| File | What it does |
+|---|---|
+| `deeplearn.ipynb` | Stage 0. Capture-24 (151 people) → 30 s windows at 50 Hz (20 Hz low-pass, then every 2nd sample), Walmsley 4 classes (sleep, sedentary, light, moderate-vigorous), windows kept only if one label covers 90%. 301,164 windows (2,510 h). |
+| `common.py` | Shared code: the person split (30 fixed test people), the 5 cross-validation folds, the 16 features, the HMM (learned from labels, Viterbi), the scores, a paired bootstrap. |
+| `stage1_rf_hmm.ipynb` | Random forest on 16 features + HMM. Test: 4-class kappa 0.701 → 0.814 with the HMM. |
+| `stage2_cnn_hmm.ipynb` | 1D CNN (36,580 numbers) on the raw signal + the same HMM. 0.659 → 0.768. |
+| `stage3_xgb_hmm.ipynb` | XGBoost (GPU) + the same HMM. 0.696 → 0.818. |
+| `cv_trees.ipynb`, `cv_cnn.ipynb`, `cv_compare.ipynb` | 5-fold cross-validation on all 151 people (GPU only; Keras on PyTorch for the CNN). XGBoost + HMM 4-class 0.822, still vs moving 0.812; the HMM adds +0.11 to +0.12 for every model. |
+| `stage4_summary.ipynb` | Summary and verdict: XGBoost + HMM recommended. |
+| `stage5_gotov.ipynb` | GOTOV (35 people aged 60–81, different sensor, never trained on): the models carry over. |
+| `stage6_har70_walking.ipynb` | HAR70+ (ages 70–95): cadence median 104 steps/min; 25% of walking in bouts under 30 s. Found that GOTOV's "walking called light" was mostly a turned sensor, not age. |
+| `stage7_axis_alignment.ipynb`, `watch_alignment.py`, `explaination-orientation.md` | The 48 possible axis setups, what a wrong one costs (up to −0.20 kappa), a tool that finds the setup without labels, per-axis calibration (sphere fit), the watch procedure and firmware code. |
+| `stage8_export_xgboost.ipynb`, `export/` | Smaller XGBoost for the watch (depth 3, 300 rounds, 163 kB), live HMM (uses only the past), final model trained on all 151 people, exported to C (`sg_xgb.h`, `sg_xgb_model.h`, `sg_xgb_test_vectors.h`). Compiled on the laptop: same answer as Python for 100% of 8,558 windows. |
+| `stage9_old_vs_new.ipynb` | Old watch model (`har_model.h`, run through the firmware's own C code) vs the new one. Capture-24: kappa 0.626 vs 0.739. GOTOV: 0.862 vs 0.932 with standing = moving, 0.957 vs 0.876 with standing = still. |
+| `test_watch_recording.py`, `rf_predict.py` | Tests both models on the watch's own recordings (`record.py` or Waveshare `capture_csv.py` files): calibration, axis setup, scores, firmware constants. `rf_predict.py` runs the Stage 1 forest in anaconda (older scikit-learn). |
+| `OLD_VS_NEW_MODEL.md`, `Whats-Next.md` | The detailed old-vs-new explanation; the next steps (fall detector re-test and improvement, watch recordings, integration). |
+| `results/` | Models (`xgb_watch_all151.json` + `hmm_all151.npz` are the exported final model), result tables. Large prediction files are git-ignored; the notebooks remake them. |
+
+**Environment:** `.venv-tf` (local only): TensorFlow 2.21 + Keras 3.15, PyTorch 2.11 with CUDA, XGBoost 3.2 with CUDA, Zig C compiler. Training on the RTX 3060 only.
+
+**Next:** see `Whats-Next.md`: record on the watch (`tests/HOW_TO_RECORD.md`), axis setup + calibration in the firmware, add the C model, decide what "moving" means, then the fall detector.
+
+---
+
 ## Part C. Change log (newest first)
+
+### 2026-11-26: Activity model v2 (Block 19) + recording guide
+- `notebooks/DEEPDEEPDEEP_learning/`: **new folder** (built 2026-11-25 to 26). Stages 0–9, cross-validation, `common.py`, `watch_alignment.py`, `test_watch_recording.py`, `rf_predict.py`, `export/` (C model), `results/`, and the docs `explaination-orientation.md`, `OLD_VS_NEW_MODEL.md`, `Whats-Next.md`. See Block 19.
+- `notebooks/DEEPDEEPDEEP_learning/.gitignore`: keeps out `processed/` (the 5.4 GB of windows), `.venv-tf/`, the 136 MB forest, large prediction files, compiled test programs.
+- `tests/HOW_TO_RECORD.md`: **new**. How to record watch data for testing the activity models.
+- Blocks 5 and 6: notes added (superseded by Block 19; Block 6's GOTOV loss may be the turned-sensor problem).
+- Not changed: firmware. The new model's firmware code is in `export/` and Stage 7/8 notebooks, ready to add.
+- Planned: rename the folder to `notebooks/still-moving/` (blocked while VS Code had it open).
 
 ### 2026-11-24: `firmware/espwatch_prototype/`: the FinalPrototype on the Waveshare watch, over Wi-Fi
 - `firmware/espwatch_prototype/espwatch_prototype.ino`: new sketch, built from `Melv-Codes/esp_watch` (QMI8658, models, AMOLED screen, touch, BOOT button).

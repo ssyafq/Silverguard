@@ -1,0 +1,15 @@
+# big window files made by deeplearn.ipynb, never pushed
+processed/
+# the forest is over GitHub 100 MB file limit; stage1_rf_hmm.ipynb remakes it
+results/*.joblib
+# TensorFlow environment for Stage 2
+.venv-tf/
+export/*.bin
+export/*.exe
+export/*.pdb
+# large prediction files: the notebooks remake them (see Whats-Next.md, section 6)
+results/*_predictions.npz
+results/cv_cnn_fold?.npz
+# test-script output and Python caches
+watch_test_results/
+__pycache__/

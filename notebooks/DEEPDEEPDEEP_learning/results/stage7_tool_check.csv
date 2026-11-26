@@ -1,0 +1,1201 @@
+candidates,people pooled,picked correct,kappa lost
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.0032152259759301214
+z kept (16),3,False,0.0032152259759301214
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.06045779922349792
+z kept (16),1,False,-0.027858751219821065
+all 48,3,False,0.00102219658547061
+z kept (16),3,False,0.00102219658547061
+all 48,5,False,0.0027658062203641974
+z kept (16),5,False,0.0027658062203641974
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.02491477325139091
+z kept (16),1,False,0.02491477325139091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.03295024476711258
+z kept (16),3,False,-0.03295024476711258
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.29343262782433843
+z kept (16),1,False,0.05710755168635595
+all 48,3,False,-0.0195297282703019
+z kept (16),3,False,-0.0195297282703019
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.28646689492434785
+z kept (16),1,False,-0.0015151244911147943
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0017570521908678804
+z kept (16),5,False,0.0017570521908678804
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.007623926599100901
+z kept (16),3,False,-0.007623926599100901
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.021578633997636244
+z kept (16),5,False,-0.026864500893711153
+all 48,1,False,-0.0015151244911147943
+z kept (16),1,False,-0.0015151244911147943
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.036819645501343444
+z kept (16),5,False,0.036819645501343444
+all 48,1,False,0.18341889439132397
+z kept (16),1,True,0.0
+all 48,3,False,0.04618142101575595
+z kept (16),3,True,0.0
+all 48,5,False,-0.019802120596897697
+z kept (16),5,False,-0.019802120596897697
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.0011099145213802064
+z kept (16),3,False,-0.0011099145213802064
+all 48,5,False,0.016037632199976205
+z kept (16),5,False,0.016037632199976205
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.0087820930534979
+z kept (16),3,False,-0.0067668652429579606
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0027450012870060326
+z kept (16),5,False,0.0027450012870060326
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.039854373966160574
+z kept (16),3,False,0.039854373966160574
+all 48,5,False,0.000698080894151043
+z kept (16),5,False,0.000698080894151043
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.0062541496605373155
+z kept (16),3,False,-0.0062541496605373155
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,False,-0.04601203320762263
+z kept (16),3,False,-0.04601203320762263
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.009404103883768555
+z kept (16),3,False,0.009404103883768555
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,False,0.021140869307412952
+z kept (16),3,False,0.021140869307412952
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,False,-0.010736682767023442
+z kept (16),3,False,-0.010736682767023442
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.0822618850206096
+z kept (16),1,False,-0.08241666673974091
+all 48,3,False,0.028828404421790837
+z kept (16),3,False,0.028828404421790837
+all 48,5,False,-0.01121601267310417
+z kept (16),5,False,-0.014668562465182777
+all 48,1,False,0.0971925800750073
+z kept (16),1,False,-0.027858751219821065
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04058422174687448
+z kept (16),1,False,-0.08241666673974091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.027706807445919645
+z kept (16),5,False,-0.012297725221198385
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.06045779922349792
+z kept (16),1,False,-0.027858751219821065
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,False,0.002898751658983456
+z kept (16),3,False,0.002898751658983456
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.002716156192703334
+z kept (16),5,False,-0.002716156192703334
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,False,0.010332720946625998
+z kept (16),3,False,0.009507982957301117
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0014870533534886877
+z kept (16),5,False,0.0014870533534886877
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.015758011723636424
+z kept (16),5,False,-0.015758011723636424
+all 48,1,False,0.0971925800750073
+z kept (16),1,False,-0.027858751219821065
+all 48,3,False,0.03537175404396975
+z kept (16),3,False,0.03537175404396975
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.008287070690730166
+z kept (16),3,False,0.008287070690730166
+all 48,5,False,0.011897108618738782
+z kept (16),5,False,0.011897108618738782
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.011083794563592727
+z kept (16),3,False,-0.011083794563592727
+all 48,5,False,-0.016374869429221374
+z kept (16),5,False,-0.016374869429221374
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.01639961954715552
+z kept (16),3,False,-0.01639961954715552
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.28646689492434785
+z kept (16),1,False,-0.0015151244911147943
+all 48,3,False,-0.011867873202506929
+z kept (16),3,False,-0.011867873202506929
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.006371814732135972
+z kept (16),5,False,-0.006371814732135972
+all 48,1,False,-0.021339691430535712
+z kept (16),1,False,-0.0231180996892979
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,False,-0.006172254354648188
+z kept (16),3,False,-0.006172254354648188
+all 48,5,False,-0.011519132271617383
+z kept (16),5,False,-0.011519132271617383
+all 48,1,False,0.02491477325139091
+z kept (16),1,False,0.02491477325139091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.0043660030306723165
+z kept (16),5,False,-0.0043660030306723165
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0168203031078904
+z kept (16),5,False,0.0168203031078904
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.010987022034414928
+z kept (16),1,False,0.028414836921004993
+all 48,3,False,-0.006416655742356207
+z kept (16),3,False,-0.006416655742356207
+all 48,5,False,-0.01822438588693063
+z kept (16),5,False,-0.01822438588693063
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.05306508789427481
+z kept (16),3,False,0.05306508789427481
+all 48,5,False,0.02228019260083709
+z kept (16),5,False,0.02228019260083709
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.02620668989383479
+z kept (16),3,False,-0.02620668989383479
+all 48,5,False,0.03560796000940554
+z kept (16),5,False,0.03560796000940554
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,False,-0.009134156064744844
+z kept (16),3,False,-0.009134156064744844
+all 48,5,False,0.00636992312571274
+z kept (16),5,False,0.00636992312571274
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,False,-0.023382030460657306
+z kept (16),3,False,-0.023382030460657306
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.04527519352652265
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.04041070293335258
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.06644590250180167
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,False,0.011249964914132216
+z kept (16),3,False,0.011249964914132216
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,False,-0.028189608062664906
+z kept (16),3,False,-0.028189608062664906
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.018315345430318614
+z kept (16),3,False,-0.018315345430318614
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,False,-0.010178904427954364
+z kept (16),3,False,-0.010178904427954364
+all 48,5,False,0.040411023633127915
+z kept (16),5,False,0.040411023633127915
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,False,0.022220912182986496
+z kept (16),3,False,0.0007952771290753077
+all 48,5,False,0.0006574975551373541
+z kept (16),5,False,0.0006574975551373541
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,False,-0.0260147295748967
+z kept (16),3,False,-0.0260147295748967
+all 48,5,False,-0.002234675191820412
+z kept (16),5,False,-0.002234675191820412
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.04971072705501045
+z kept (16),5,True,0.0
+all 48,1,False,-0.03047515743214435
+z kept (16),1,False,-0.04580582752914952
+all 48,3,False,-0.003751731953383556
+z kept (16),3,False,-0.003751731953383556
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.29343262782433843
+z kept (16),1,False,0.14814231811086365
+all 48,3,False,0.015045541934602058
+z kept (16),3,False,0.015045541934602058
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02964726402966944
+z kept (16),1,False,-0.002981823269585626
+all 48,3,False,-0.010186196991896232
+z kept (16),3,False,-0.010186196991896232
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.04041070293335258
+z kept (16),1,True,0.0
+all 48,3,False,0.02871673551219704
+z kept (16),3,False,0.02871673551219704
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.004723329132789167
+z kept (16),1,False,0.004723329132789167
+all 48,3,False,0.07849091391076239
+z kept (16),3,True,0.0
+all 48,5,False,-0.02192336987070618
+z kept (16),5,False,-0.02192336987070618
+all 48,1,False,0.29343262782433843
+z kept (16),1,False,0.14814231811086365
+all 48,3,False,0.001671543928640773
+z kept (16),3,False,0.001671543928640773
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0038763286083030035
+z kept (16),5,False,0.0038763286083030035
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.00480107626651074
+z kept (16),5,False,0.00480107626651074
+all 48,1,False,-0.04058422174687448
+z kept (16),1,False,-0.08241666673974091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.21200726701585348
+z kept (16),1,False,-0.03441900505933271
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.015141335719468074
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.0168192844757048
+z kept (16),3,False,-0.0168192844757048
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.013537790418522988
+z kept (16),5,False,-0.013537790418522988
+all 48,1,False,-0.01895814248094374
+z kept (16),1,False,-0.01895814248094374
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.006928997911020485
+z kept (16),5,False,0.006928997911020485
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.004361696457193931
+z kept (16),5,False,-0.004361696457193931
+all 48,1,False,0.0130289390953926
+z kept (16),1,True,0.0
+all 48,3,False,-0.008726235089071666
+z kept (16),3,False,-0.008726235089071666
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.15553622029344727
+z kept (16),1,False,-0.01895814248094374
+all 48,3,False,0.02815114703074073
+z kept (16),3,False,0.02815114703074073
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,False,0.14237443914222414
+z kept (16),3,False,-0.003942042879033732
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.0028267067048348324
+z kept (16),3,False,-0.0028267067048348324
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02964726402966944
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,False,0.03443603870661027
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.0037126549528955443
+z kept (16),5,False,-0.0037126549528955443
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.001283922050858566
+z kept (16),5,False,-0.001283922050858566
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.016675396470499603
+z kept (16),5,False,-0.006587462680779565
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.021487461796802765
+z kept (16),5,False,0.021487461796802765
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.015124797602162529
+z kept (16),3,False,-0.015124797602162529
+all 48,5,False,-0.008788141493459767
+z kept (16),5,False,-0.008788141493459767
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,False,-0.003309842775139608
+z kept (16),3,False,-0.003309842775139608
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,False,0.0008077071798875771
+z kept (16),3,False,0.0008077071798875771
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03047515743214435
+z kept (16),1,False,-0.04580582752914952
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.003342763951598641
+z kept (16),3,False,-0.003342763951598641
+all 48,5,False,-0.024930583276762695
+z kept (16),5,False,-0.024930583276762695
+all 48,1,False,0.06687648692462445
+z kept (16),1,False,0.009046809986209436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.007495477665794015
+z kept (16),5,False,-0.007495477665794015
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,False,0.013216047332401448
+z kept (16),3,False,-0.01243928845224677
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.004327198625558281
+z kept (16),5,False,0.004327198625558281
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,False,0.007397794081080433
+z kept (16),3,False,0.007397794081080433
+all 48,5,False,-0.0081388064455848
+z kept (16),5,False,-0.0081388064455848
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,False,0.09063152843331408
+z kept (16),3,False,-0.03739052148201427
+all 48,5,False,0.12612465864401484
+z kept (16),5,False,-0.013053489226863557
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,False,0.05053293420440452
+z kept (16),3,True,0.0
+all 48,5,False,-0.024439326191514166
+z kept (16),5,False,-0.024439326191514166
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.019560495365618397
+z kept (16),3,False,-0.019560495365618397
+all 48,5,False,-0.0027774587065401367
+z kept (16),5,False,-0.0027774587065401367
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,False,-0.014268389713032903
+z kept (16),3,False,-0.014268389713032903
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,False,0.006008077674457287
+z kept (16),3,False,0.006008077674457287
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.07930385802479845
+z kept (16),1,False,-0.07930385802479845
+all 48,3,False,0.028092834761139662
+z kept (16),3,False,0.028092834761139662
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.29343262782433843
+z kept (16),1,False,-0.03441900505933271
+all 48,3,False,-0.007884493815934627
+z kept (16),3,False,-0.007884493815934627
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.04041070293335258
+z kept (16),1,True,0.0
+all 48,3,False,0.004555550052565323
+z kept (16),3,False,0.004555550052565323
+all 48,5,False,0.019438624189716047
+z kept (16),5,False,0.0011358483542291075
+all 48,1,False,0.29343262782433843
+z kept (16),1,False,0.14814231811086365
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.07930385802479845
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,False,-0.005213662628977748
+z kept (16),3,False,-0.005213662628977748
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,False,0.011527189506328694
+z kept (16),3,False,0.0020431976376450813
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.07584411660334833
+z kept (16),1,False,0.004723329132789167
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04580582752914952
+z kept (16),1,False,-0.04580582752914952
+all 48,3,False,-0.0058567045489288
+z kept (16),3,False,-0.0058567045489288
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.012160722956633618
+z kept (16),1,False,-0.05991302928074849
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04058422174687448
+z kept (16),1,False,-0.08241666673974091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.016135802102277184
+z kept (16),5,False,-0.016135802102277184
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.014407901583056382
+z kept (16),3,False,0.014407901583056382
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.009534813154744137
+z kept (16),1,False,-0.009534813154744137
+all 48,3,False,-0.0020588722462876094
+z kept (16),3,False,-0.0020588722462876094
+all 48,5,False,-0.007786526821120643
+z kept (16),5,False,-0.007786526821120643
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,False,0.10625938547184548
+z kept (16),3,False,-0.0029894906237050898
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,False,-0.004759425533771511
+z kept (16),3,False,-0.004759425533771511
+all 48,5,False,0.009847532749771903
+z kept (16),5,False,0.003021001418359437
+all 48,1,False,0.18341889439132397
+z kept (16),1,True,0.0
+all 48,3,False,-0.01513844799934716
+z kept (16),3,False,-0.01513844799934716
+all 48,5,False,0.012788487174247609
+z kept (16),5,False,0.012788487174247609
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.0015151244911147943
+z kept (16),1,False,-0.0015151244911147943
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.020705574040449905
+z kept (16),5,False,-0.020705574040449905
+all 48,1,False,-0.04058422174687448
+z kept (16),1,False,-0.08241666673974091
+all 48,3,False,0.016309166296125072
+z kept (16),3,False,-0.010294187794194332
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.08860683983114148
+z kept (16),1,False,0.009046809986209436
+all 48,3,False,-0.003428912026395096
+z kept (16),3,False,-0.003428912026395096
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.012810170243876503
+z kept (16),3,False,-0.012810170243876503
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.022629347474226978
+z kept (16),5,False,0.022629347474226978
+all 48,1,False,-0.027858751219821065
+z kept (16),1,False,-0.027858751219821065
+all 48,3,False,-0.012371046195754687
+z kept (16),3,False,-0.012371046195754687
+all 48,5,False,-0.0015890913998805045
+z kept (16),5,False,-0.0015890913998805045
+all 48,1,False,0.004723329132789167
+z kept (16),1,False,0.004723329132789167
+all 48,3,False,0.0160850973833843
+z kept (16),3,False,0.0160850973833843
+all 48,5,False,0.0018407893243714835
+z kept (16),5,False,0.0018407893243714835
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03406411917589658
+z kept (16),1,True,0.0
+all 48,3,False,-0.00842400666110362
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.019524863934995862
+z kept (16),1,False,-0.019524863934995862
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.023458978141360887
+z kept (16),1,False,0.023458978141360887
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.027072018699778377
+z kept (16),1,False,-0.027072018699778377
+all 48,3,False,0.07541626941839093
+z kept (16),3,False,0.019302355514865106
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.027579709862437872
+z kept (16),5,False,0.027579709862437872
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.04494147894595165
+z kept (16),3,False,-0.04494147894595165
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,False,0.006005642512395289
+z kept (16),3,False,0.006005642512395289
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.039005623508037046
+z kept (16),1,True,0.0
+all 48,3,False,0.08428353075481372
+z kept (16),3,False,-0.04189431054167233
+all 48,5,False,0.057123981778018494
+z kept (16),5,True,0.0
+all 48,1,False,-0.02031961595079823
+z kept (16),1,False,-0.02031961595079823
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0062765980805965516
+z kept (16),5,False,0.0062765980805965516
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.0072596842304791355
+z kept (16),5,False,0.0072596842304791355
+all 48,1,False,-0.07846527344917864
+z kept (16),1,False,-0.07846527344917864
+all 48,3,False,-0.04076588821758176
+z kept (16),3,False,-0.04076588821758176
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.03719284100196041
+z kept (16),3,False,-0.03719284100196041
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.0008806823909230191
+z kept (16),3,False,-0.0008806823909230191
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,0.015866697948353915
+z kept (16),5,False,0.015866697948353915
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.02491477325139091
+z kept (16),1,False,0.02491477325139091
+all 48,3,False,0.01351446545956203
+z kept (16),3,False,-0.002559054078815256
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.012583318983041436
+z kept (16),1,False,-0.012583318983041436
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,False,-0.03752076627994807
+z kept (16),5,False,-0.03752076627994807
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.13770500248288453
+z kept (16),1,False,-0.07930385802479845
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.04058422174687448
+z kept (16),1,False,-0.08241666673974091
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.07584411660334833
+z kept (16),1,False,0.004723329132789167
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,-0.03414921435369844
+z kept (16),1,False,-0.03414921435369844
+all 48,3,False,-0.018333218692354825
+z kept (16),3,False,-0.018333218692354825
+all 48,5,False,0.031405330585877
+z kept (16),5,False,0.031405330585877
+all 48,1,False,0.01964193082423782
+z kept (16),1,False,0.01964193082423782
+all 48,3,True,0.0
+z kept (16),3,True,0.0
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.009351827475643707
+z kept (16),3,False,0.009351827475643707
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,0.025111517522102684
+z kept (16),3,False,0.025111517522102684
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,True,0.0
+z kept (16),1,True,0.0
+all 48,3,False,-0.007562714620747831
+z kept (16),3,False,-0.007562714620747831
+all 48,5,True,0.0
+z kept (16),5,True,0.0
+all 48,1,False,0.25202578274486265
+z kept (16),1,False,0.15042832282919205
+all 48,3,False,0.015076604859323087
+z kept (16),3,False,0.015076604859323087
+all 48,5,True,0.0
+z kept (16),5,True,0.0

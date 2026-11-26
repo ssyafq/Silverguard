@@ -1,0 +1,5 @@
+model,HMM,binary kappa,3-class kappa
+tested twin (121 people),whole-day HMM,0.9719285057912546,0.7991301356204323
+tested twin (121 people),live HMM,0.9317318991960932,0.8047942985008911
+final (151 people),whole-day HMM,0.968167495845155,0.797513700822991
+final (151 people),live HMM,0.9286977613825863,0.8079635207938262
