@@ -1,6 +1,6 @@
 // SilverGuard activity model for the watch: features + XGBoost + live HMM.
 //
-// Made in notebooks/still-moving/stage8_export_xgboost.ipynb. Include ONE time in the firmware.
+// Made in notebooks/still-moving-DL/stage8_export_xgboost.ipynb. Include ONE time in the firmware.
 // Needs sg_xgb_model.h (generated: trees, HMM, constants) in the same folder.
 //
 // Use:

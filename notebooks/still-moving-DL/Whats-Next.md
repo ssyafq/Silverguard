@@ -45,7 +45,7 @@ only, and check the C code against Python before anything goes on the watch.
 
 ## 3. Finish the activity model on the watch (short)
 
-- [ ] **Rename this folder** to `notebooks/still-moving` (close VS Code first), then commit the rename
+- [x] Folder renamed to `notebooks/still-moving-DL`
 - [ ] **Recording session 1** (`tests/HOW_TO_RECORD.md`): calibration + 3–5 min per activity
 - [ ] Run `test_watch_recording.py --orientation labels`, save `watch_setup.json`
 - [ ] **Session 2** with `--setup watch_setup.json`: the honest score to report
@@ -152,7 +152,7 @@ matters most.
 
 ## 6. Housekeeping
 
-- [ ] Rename this folder to `still-moving` (section 3)
+- [x] Folder renamed to `still-moving-DL`; the environment can be rebuilt from `requirements-dl.txt`
 - [ ] The large prediction files (`results/*_predictions.npz`, `results/cv_cnn_fold?.npz`) are not in git: re-run
       the notebooks to remake them. The processed data (`processed/`) is never in git
 - [ ] `.venv-tf` (TensorFlow, PyTorch with CUDA, XGBoost) is local only. After the rename, use

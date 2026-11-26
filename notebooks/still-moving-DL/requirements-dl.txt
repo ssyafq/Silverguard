@@ -1,0 +1,28 @@
+# Python environment for notebooks/still-moving-DL (the activity model notebooks and scripts).
+# Python 3.11. Make it inside this folder (it is git-ignored):
+#
+#   py -3.11 -m venv .venv-tf
+#   .venv-tf\Scripts\python.exe -m pip install -r requirements-dl.txt
+#   .venv-tf\Scripts\python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cu128
+#
+# The last line installs PyTorch WITH CUDA (the GPU). Training runs on an NVIDIA GPU only: TensorFlow on
+# Windows can't use the GPU, so the CNN cross-validation (cv_cnn.ipynb) runs Keras on the PyTorch backend.
+# Run notebooks with:  .venv-tf\Scripts\python.exe -m jupyter nbconvert --to notebook --execute --inplace <file>
+#
+# Stage 1 (stage1_rf_hmm.ipynb) and rf_predict.py use anaconda's Python with scikit-learn 1.2.2 instead,
+# because the saved forest was made with that version.
+
+numpy==2.4.6
+pandas==3.1.1
+scipy==1.17.1
+scikit-learn==1.9.1
+joblib==1.6.0
+xgboost==3.2.0          # includes CUDA support on Windows
+tensorflow==2.21.0
+keras==3.15.1
+nbformat==5.11.1
+nbconvert==7.17.2
+ipykernel==7.4.0
+jupyter
+ziglang==0.17.1         # C compiler, used to check the exported C model against Python
+pyserial                # for record.py / capture_csv.py, if recording from this environment

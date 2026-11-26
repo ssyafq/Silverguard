@@ -32,7 +32,7 @@ Last full review: **2026-11-17** (last change: 2026-11-26)
 | 16 | Data folders | n/a | Empty in git (data is git-ignored) | `data/` |
 | 17 | Documentation | Obj 2 | Done | `context.md`, `docs/`, READMEs, `progress.md` |
 | 18 | Live streaming: watch → Cloud Run → Firestore | Obj 2 | **Live on Google Cloud** (project `silverguard-3cde2`), tested end-to-end from a PC; not yet run on the watch | `streaming/` |
-| 19 | Activity model v2: Capture-24 forest / CNN / XGBoost + HMM, cross-validation, GOTOV + HAR70+ tests, axis alignment, C export | Obj 2 | **Done on datasets; exported to C; not yet on the watch** | `notebooks/DEEPDEEPDEEP_learning/` (to be renamed `notebooks/still-moving/`) |
+| 19 | Activity model v2: Capture-24 forest / CNN / XGBoost + HMM, cross-validation, GOTOV + HAR70+ tests, axis alignment, C export | Obj 2 | **Done on datasets; exported to C; not yet on the watch** | `notebooks/still-moving-DL/` |
 
 ---
 
@@ -148,7 +148,7 @@ Last full review: **2026-11-17** (last change: 2026-11-26)
 
 **Result:** on the wrist (Capture-24), the UCI model, the Capture-24 model and the one-rule baseline all score about **0.74 balanced accuracy**, a tie. Decision: the simple `mag_std` threshold for now.
 
-**Update 2026-11-26:** superseded by Block 19. With 30 s windows, 16 features, XGBoost and an HMM, the new model beats this one in daily life (still vs moving kappa 0.739 vs 0.626 on 30 held-out Capture-24 people, run through the firmware's own `har_model.h`). The old model stays better when standing should count as still (see `notebooks/DEEPDEEPDEEP_learning/OLD_VS_NEW_MODEL.md`).
+**Update 2026-11-26:** superseded by Block 19. With 30 s windows, 16 features, XGBoost and an HMM, the new model beats this one in daily life (still vs moving kappa 0.739 vs 0.626 on 30 held-out Capture-24 people, run through the firmware's own `har_model.h`). The old model stays better when standing should count as still (see `notebooks/still-moving-DL/OLD_VS_NEW_MODEL.md`).
 
 ---
 
@@ -317,7 +317,7 @@ To do: confusion matrix, fall recall and false alarms/h on our own recordings; f
 ---
 
 ### Block 19. Activity model v2 (still / moving and 4 activity levels)
-**Folder:** `notebooks/DEEPDEEPDEEP_learning/` (to be renamed `notebooks/still-moving/`; the rename failed while VS Code had the folder open) · **Status:** done on datasets, exported to C, not yet on the watch
+**Folder:** `notebooks/still-moving-DL/` (first committed as `notebooks/DEEPDEEPDEEP_learning/`) · **Status:** done on datasets, exported to C, not yet on the watch
 
 Built to the spec "small 1D CNN vs random forest on Capture-24, fairly compared", then extended. Every notebook has a beginner's "How this works" section, and the later ones check their own written conclusions against the numbers.
 
@@ -339,7 +339,7 @@ Built to the spec "small 1D CNN vs random forest on Capture-24, fairly compared"
 | `OLD_VS_NEW_MODEL.md`, `Whats-Next.md` | The detailed old-vs-new explanation; the next steps (fall detector re-test and improvement, watch recordings, integration). |
 | `results/` | Models (`xgb_watch_all151.json` + `hmm_all151.npz` are the exported final model), result tables. Large prediction files are git-ignored; the notebooks remake them. |
 
-**Environment:** `.venv-tf` (local only): TensorFlow 2.21 + Keras 3.15, PyTorch 2.11 with CUDA, XGBoost 3.2 with CUDA, Zig C compiler. Training on the RTX 3060 only.
+**Environment:** `.venv-tf` (local only; rebuild it from `requirements-dl.txt`): TensorFlow 2.21 + Keras 3.15, PyTorch 2.11 with CUDA, XGBoost 3.2 with CUDA, Zig C compiler. Training on the RTX 3060 only.
 
 **Next:** see `Whats-Next.md`: record on the watch (`tests/HOW_TO_RECORD.md`), axis setup + calibration in the firmware, add the C model, decide what "moving" means, then the fall detector.
 
@@ -347,13 +347,17 @@ Built to the spec "small 1D CNN vs random forest on Capture-24, fairly compared"
 
 ## Part C. Change log (newest first)
 
+### 2026-11-26: Activity folder renamed to `notebooks/still-moving-DL/`, merged into `main`
+- `notebooks/DEEPDEEPDEEP_learning/` → `notebooks/still-moving-DL/` (committed as a rename). References updated in `tests/HOW_TO_RECORD.md`, `export/sg_xgb.h`, `Whats-Next.md` and this file.
+- `notebooks/still-moving-DL/requirements-dl.txt`: **new**. The Python packages and versions for the folder's environment (plus PyTorch with CUDA), so teammates can rebuild it.
+- Branch `activity-model-v2` merged into `main`.
+
 ### 2026-11-26: Activity model v2 (Block 19) + recording guide
 - `notebooks/DEEPDEEPDEEP_learning/`: **new folder** (built 2026-11-25 to 26). Stages 0–9, cross-validation, `common.py`, `watch_alignment.py`, `test_watch_recording.py`, `rf_predict.py`, `export/` (C model), `results/`, and the docs `explaination-orientation.md`, `OLD_VS_NEW_MODEL.md`, `Whats-Next.md`. See Block 19.
 - `notebooks/DEEPDEEPDEEP_learning/.gitignore`: keeps out `processed/` (the 5.4 GB of windows), `.venv-tf/`, the 136 MB forest, large prediction files, compiled test programs.
 - `tests/HOW_TO_RECORD.md`: **new**. How to record watch data for testing the activity models.
 - Blocks 5 and 6: notes added (superseded by Block 19; Block 6's GOTOV loss may be the turned-sensor problem).
 - Not changed: firmware. The new model's firmware code is in `export/` and Stage 7/8 notebooks, ready to add.
-- Planned: rename the folder to `notebooks/still-moving/` (blocked while VS Code had it open).
 
 ### 2026-11-24: `firmware/espwatch_prototype/`: the FinalPrototype on the Waveshare watch, over Wi-Fi
 - `firmware/espwatch_prototype/espwatch_prototype.ino`: new sketch, built from `Melv-Codes/esp_watch` (QMI8658, models, AMOLED screen, touch, BOOT button).

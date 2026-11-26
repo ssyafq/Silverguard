@@ -4,9 +4,9 @@ This guide explains how to record movement data with the SilverGuard watch, so w
 activity models work **on our own watch**. Follow it step by step. The way you record matters as much as the model:
 a badly labelled or badly worn recording gives meaningless scores.
 
-The analysis script is `notebooks/still-moving/test_watch_recording.py`. Background:
-`notebooks/still-moving/explaination-orientation.md` (why the watch's axes matter) and
-`notebooks/still-moving/OLD_VS_NEW_MODEL.md` (what the two models are).
+The analysis script is `notebooks/still-moving-DL/test_watch_recording.py`. Background:
+`notebooks/still-moving-DL/explaination-orientation.md` (why the watch's axes matter) and
+`notebooks/still-moving-DL/OLD_VS_NEW_MODEL.md` (what the two models are).
 
 ---
 
@@ -196,10 +196,10 @@ Then:
 
 ## 7. Run the test
 
-From `notebooks/still-moving/`, using its Python environment:
+From `notebooks/still-moving-DL/`, using its Python environment:
 
 ```
-cd notebooks/still-moving
+cd notebooks/still-moving-DL
 .venv-tf\Scripts\python.exe test_watch_recording.py recordings\2026-11-28_P01\*.csv --calibration recordings\2026-11-28_P01\calibration_20261128_100000.csv --orientation labels
 ```
 (One line. Put the session folder wherever you keep it and adjust the paths.)
